@@ -225,7 +225,7 @@ gentity_t *TossClientItems( gentity_t *self )
 					dropped->count = 15;
 					break;
 				case WP_DROIDBLASTER:
-					dropped->count = 20;
+					dropped->count = 15;
 					break;
 				case WP_DISRUPTOR:
 					dropped->count = 20;
@@ -237,10 +237,10 @@ gentity_t *TossClientItems( gentity_t *self )
 					dropped->count = 20;
 					break;
 				case WP_CLONERIFLE:
-					dropped->count = 25;
+					dropped->count = 20;
 					break;
 				case WP_REBELRIFLE:
-					dropped->count = 15;
+					dropped->count = 20;
 					break;
 				case WP_DEMP2:
 					dropped->count = 10;
@@ -3904,6 +3904,8 @@ extern void RunEmplacedWeapon( gentity_t *ent, usercmd_t **ucmd );
 				&& ( Q_irand( 0, 1 )
 					|| meansOfDeath == MOD_EXPLOSIVE
 					|| meansOfDeath == MOD_REPEATER_ALT
+					|| meansOfDeath == MOD_CLONERIFLE_ALT
+					|| meansOfDeath == MOD_REBELRIFLE_ALT
 					|| meansOfDeath == MOD_FLECHETTE_ALT
 					|| meansOfDeath == MOD_ROCKET
 					|| meansOfDeath == MOD_ROCKET_ALT
@@ -4557,6 +4559,8 @@ extern void RunEmplacedWeapon( gentity_t *ent, usercmd_t **ucmd );
 			if ( hitLoc == HL_HEAD
 				&& !(dflags&DAMAGE_RADIUS)
 				&& meansOfDeath!=MOD_REPEATER_ALT
+				&& meansOfDeath!=MOD_CLONERIFLE_ALT
+				&& meansOfDeath!=MOD_REBELRIFLE_ALT
 				&& meansOfDeath!=MOD_FLECHETTE_ALT
 				&& meansOfDeath!=MOD_ROCKET
 				&& meansOfDeath!=MOD_ROCKET_ALT
@@ -4867,8 +4871,9 @@ int CheckArmor (gentity_t *ent, int damage, int dflags, int mod)
 		// The Assassin Always Completely Ignores These Damage Types
 		//-----------------------------------------------------------
 		if (mod==MOD_GAS ||	mod==MOD_IMPACT || mod==MOD_LAVA || mod==MOD_SLIME || mod==MOD_WATER ||
-			mod==MOD_FORCE_GRIP || mod==MOD_FORCE_DRAIN || mod==MOD_SEEKER || mod==MOD_MELEE ||
-			mod==MOD_BOWCASTER || mod==MOD_BRYAR || mod==MOD_BRYAR_ALT || mod==MOD_BLASTER || mod==MOD_BLASTER_ALT ||
+			mod==MOD_FORCE_GRIP || mod==MOD_FORCE_DRAIN || mod==MOD_SEEKER || mod==MOD_MELEE || mod==MOD_CLONERIFLE || mod==MOD_CLONERIFLE_ALT ||
+			mod==MOD_REBELRIFLE || mod==MOD_REBELRIFLE_ALT ||
+			mod==MOD_BOWCASTER || mod==MOD_BRYAR || mod==MOD_BRYAR_ALT || mod==MOD_BLASTER || mod==MOD_BLASTER_ALT || mod==MOD_DROIDBLASTER || mod==MOD_DROIDBLASTER_ALT ||
 			mod==MOD_SNIPER || mod==MOD_BOWCASTER || mod==MOD_BOWCASTER_ALT || mod==MOD_REPEATER || mod==MOD_REPEATER_ALT)
 		{
 			return damage;
@@ -5101,6 +5106,8 @@ void G_CheckKnockdown( gentity_t *targ, gentity_t *attacker, vec3_t newDir, int 
 	if ( !(dflags&DAMAGE_RADIUS) )
 	{//not inherently explosive damage, check mod
 		if ( mod!=MOD_REPEATER_ALT
+			&&mod!=MOD_CLONERIFLE_ALT
+			&&mod!=MOD_REBELRIFLE_ALT
 			&&mod!=MOD_FLECHETTE_ALT
 			&&mod!=MOD_ROCKET
 			&&mod!=MOD_ROCKET_ALT
@@ -5421,6 +5428,8 @@ qboolean G_NonLocationSpecificDamage( int meansOfDeath )
 {
 	if ( meansOfDeath == MOD_EXPLOSIVE
 		|| meansOfDeath == MOD_REPEATER_ALT
+		|| meansOfDeath == MOD_CLONERIFLE_ALT
+		|| meansOfDeath == MOD_REBELRIFLE_ALT
 		|| meansOfDeath == MOD_FLECHETTE_ALT
 		|| meansOfDeath == MOD_ROCKET
 		|| meansOfDeath == MOD_ROCKET_ALT
@@ -5783,6 +5792,8 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, const
 			}
 			if ( (dflags & DAMAGE_RADIUS)
 				|| mod == MOD_REPEATER_ALT
+				|| mod == MOD_CLONERIFLE_ALT
+				|| mod == MOD_REBELRIFLE_ALT
 				|| mod == MOD_FLECHETTE_ALT
 				|| mod == MOD_ROCKET
 				|| mod == MOD_ROCKET_ALT

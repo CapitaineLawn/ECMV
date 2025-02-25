@@ -538,12 +538,6 @@ void NPC_SetMiscDefaultData( gentity_t *ent )
 			case WP_DISRUPTOR:
 			case WP_BOWCASTER:
 			case WP_REPEATER:
-			case WP_CLONERIFLE:
-				if (ent->client->NPC_class == CLASS_CLONE
-					&& (!Q_irand(0,8)) )
-				{
-					ent->NPC->scriptFlags |= SCF_ALT_FIRE;
-				}
 			case WP_REBELRIFLE:
 			case WP_DEMP2:
 			case WP_FLECHETTE:
@@ -572,6 +566,13 @@ void NPC_SetMiscDefaultData( gentity_t *ent )
 				{//officers, grenade-throwers use alt-fire
 					//ent->health = 50;
 					//ent->NPC->scriptFlags |= SCF_ALT_FIRE;
+				}
+				break;
+			case WP_CLONERIFLE:
+				if (ent->client->NPC_class == CLASS_CLONE
+					&& (!Q_irand(0, 8)))
+				{
+					ent->NPC->scriptFlags |= SCF_ALT_FIRE;
 				}
 				break;
 			}

@@ -78,6 +78,7 @@ typedef enum //# weapon_e
 	WP_TUSKEN_STAFF,
 	WP_SCEPTER,
 	WP_NOGHRI_STICK,
+
 	WP_DROIDBLASTER,	// NPC weapon - player can pick this up, but never starts with them
 	WP_CLONERIFLE,		// NPC weapon - player can pick this up, but never starts with them
 	WP_REBELRIFLE,		// NPC weapon - player can pick this up, but never starts with them

@@ -8888,13 +8888,13 @@ qboolean WP_ForceThrowable( gentity_t *ent, gentity_t *forwardEnt, gentity_t *se
 			}
 			break;
 		case WP_CLONERIFLE:
-			if (ent->methodOfDeath != MOD_REPEATER_ALT)
+			if (ent->methodOfDeath != MOD_CLONERIFLE_ALT)
 			{//not an alt-fire missile
 				return qfalse;
 			}
 			break;
 		case WP_REBELRIFLE:
-			if (ent->methodOfDeath != MOD_REPEATER_ALT)
+			if (ent->methodOfDeath != MOD_REBELRIFLE_ALT)
 			{//not an alt-fire missile
 				return qfalse;
 			}

@@ -39,6 +39,7 @@ void FX_BryarAltProjectileThink(  centity_t *cent, const struct weaponInfo_s *we
 void FX_BlasterProjectileThink( centity_t *cent, const struct weaponInfo_s *weapon );
 void FX_BlasterAltFireThink( centity_t *cent, const struct weaponInfo_s *weapon );
 
+// Droid Blaster - ROGER ROGER
 void FX_DroidBlasterProjectileThink(centity_t* cent, const struct weaponInfo_s* weapon);
 void FX_DroidBlasterAltFireThink(centity_t* cent, const struct weaponInfo_s* weapon);
 
@@ -48,8 +49,14 @@ void FX_BowcasterProjectileThink( centity_t *cent, const struct weaponInfo_s *we
 // Heavy Repeater
 void FX_RepeaterProjectileThink( centity_t *cent, const struct weaponInfo_s *weapon );
 void FX_RepeaterAltProjectileThink( centity_t *cent, const struct weaponInfo_s *weapon );
+
+// Clone Rifle - Copy That
+
 void FX_CloneRifleProjectileThink(centity_t* cent, const struct weaponInfo_s* weapon);
 void FX_CloneRifleAltProjectileThink(centity_t* cent, const struct weaponInfo_s* weapon);
+
+// Rebel Rifle - Yeah, about weapons quality...
+
 void FX_RebelRifleProjectileThink(centity_t* cent, const struct weaponInfo_s* weapon);
 void FX_RebelRifleAltProjectileThink(centity_t* cent, const struct weaponInfo_s* weapon);
 

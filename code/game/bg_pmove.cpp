@@ -13891,6 +13891,14 @@ static void PM_Weapon( void )
 				PM_SetAnim(pm, SETANIM_TORSO, BOTH_ATTACK3, SETANIM_FLAG_OVERRIDE | SETANIM_FLAG_HOLD | SETANIM_FLAG_RESTART);
 				break;
 
+			case WP_CLONERIFLE:
+				PM_SetAnim(pm, SETANIM_TORSO, BOTH_ATTACK3, SETANIM_FLAG_OVERRIDE | SETANIM_FLAG_HOLD | SETANIM_FLAG_RESTART);
+				break;
+
+			case WP_REBELRIFLE:
+				PM_SetAnim(pm, SETANIM_TORSO, BOTH_ATTACK3, SETANIM_FLAG_OVERRIDE | SETANIM_FLAG_HOLD | SETANIM_FLAG_RESTART);
+				break;
+
 			case WP_DISRUPTOR:
 				if ( ((pm->ps->clientNum >= MAX_CLIENTS&&!PM_ControlledByPlayer())&& pm->gent && pm->gent->NPC && (pm->gent->NPC->scriptFlags&SCF_ALT_FIRE)) ||
 					((pm->ps->clientNum < MAX_CLIENTS||PM_ControlledByPlayer()) && cg.zoomMode == 2 ) )
