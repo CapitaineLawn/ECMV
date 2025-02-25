@@ -78,13 +78,16 @@ typedef enum //# weapon_e
 	WP_TUSKEN_STAFF,
 	WP_SCEPTER,
 	WP_NOGHRI_STICK,
+	WP_DROIDBLASTER,	// NPC weapon - player can pick this up, but never starts with them
+	WP_CLONERIFLE,		// NPC weapon - player can pick this up, but never starts with them
+	WP_REBELRIFLE,		// NPC weapon - player can pick this up, but never starts with them
 
 	//# #eol
 	WP_NUM_WEAPONS
 } weapon_t;
 
 #define FIRST_WEAPON		WP_SABER		// this is the first weapon for next and prev weapon switching
-#define MAX_PLAYER_WEAPONS	WP_STUN_BATON	// this is the max you can switch to and get with the give all. - FIXME: it's actually this one *minus* one... why?
+#define MAX_PLAYER_WEAPONS	WP_REBELRIFLE	// this is the max you can switch to and get with the give all. - FIXME: it's actually this one *minus* one... why?
 
 // AMMO_NONE must be first and AMMO_MAX must be last, cause weapon load validates based off of these vals
 typedef enum //# ammo_e
@@ -185,6 +188,19 @@ typedef struct ammoData_s
 #define	BLASTER_NPC_DAMAGE_NORMAL	12 // 14
 #define	BLASTER_NPC_DAMAGE_HARD		16 // 18
 
+// Droid Blaster
+//---------
+#define DROIDBLASTER_MAIN_SPREAD			0.5f
+#define DROIDBLASTER_ALT_SPREAD			1.5f
+#define DROIDBLASTER_NPC_SPREAD			0.5f
+#define DROIDBLASTER_VELOCITY			2200
+#define DROIDBLASTER_NPC_VEL_CUT			0.5f
+#define DROIDBLASTER_NPC_HARD_VEL_CUT	0.7f
+#define DROIDBLASTER_DAMAGE				30
+#define	DROIDBLASTER_NPC_DAMAGE_EASY		8
+#define	DROIDBLASTER_NPC_DAMAGE_NORMAL	14 // 14
+#define	DROIDBLASTER_NPC_DAMAGE_HARD		18 // 18
+
 // Tenloss Disruptor
 //----------
 #define DISRUPTOR_MAIN_DAMAGE			14
@@ -232,6 +248,44 @@ typedef struct ammoData_s
 #define	REPEATER_ALT_NPC_DAMAGE_EASY	15
 #define	REPEATER_ALT_NPC_DAMAGE_NORMAL	30
 #define	REPEATER_ALT_NPC_DAMAGE_HARD	45
+
+// Clone Rifle
+
+#define CLONERIFLE_SPREAD				1.4f
+#define CLONERIFLE_NPC_SPREAD			0.7f
+#define	CLONERIFLE_DAMAGE				20
+#define	CLONERIFLE_VELOCITY			1500
+#define	CLONERIFLE_NPC_DAMAGE_EASY	20
+#define	CLONERIFLE_NPC_DAMAGE_NORMAL	24
+#define	CLONERIFLE_NPC_DAMAGE_HARD	30
+
+#define CLONERIFLE_ALT_SIZE				3	// half of bbox size
+#define	CLONERIFLE_ALT_DAMAGE				80
+#define CLONERIFLE_ALT_SPLASH_DAMAGE		80
+#define CLONERIFLE_ALT_SPLASH_RADIUS		128
+#define	CLONERIFLE_ALT_VELOCITY			900
+#define	CLONERIFLE_ALT_NPC_DAMAGE_EASY	25
+#define	CLONERIFLE_ALT_NPC_DAMAGE_NORMAL	40
+#define	CLONERIFLE_ALT_NPC_DAMAGE_HARD	55
+
+// Rebel Rifle
+
+#define REBELRIFLE_SPREAD				1.4f
+#define REBELRIFLE_NPC_SPREAD			0.7f
+#define	REBELRIFLE_DAMAGE				10
+#define	REBELRIFLE_VELOCITY			1200
+#define	REBELRIFLE_NPC_DAMAGE_EASY	6
+#define	REBELRIFLE_NPC_DAMAGE_NORMAL	8
+#define	REBELRIFLE_NPC_DAMAGE_HARD	10
+
+#define REBELRIFLE_ALT_SIZE				3	// half of bbox size
+#define	REBELRIFLE_ALT_DAMAGE				40
+#define REBELRIFLE_ALT_SPLASH_DAMAGE		40
+#define REBELRIFLE_ALT_SPLASH_RADIUS		128
+#define	REBELRIFLE_ALT_VELOCITY			800
+#define	REBELRIFLE_ALT_NPC_DAMAGE_EASY	15
+#define	REBELRIFLE_ALT_NPC_DAMAGE_NORMAL	30
+#define	REBELRIFLE_ALT_NPC_DAMAGE_HARD	45
 
 // DEMP2
 //----------

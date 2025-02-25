@@ -191,6 +191,8 @@ extern int PM_PickAnim( gentity_t *self, int minAnim, int maxAnim );
 
 extern void DoImpact( gentity_t *self, gentity_t *other, qboolean damageSelf, trace_t *trace );
 
+extern void ForceDestruction(gentity_t* ent);
+
 #define	PHASER_RECHARGE_TIME	100
 extern saberMoveName_t transitionMove[Q_NUM_QUADS][Q_NUM_QUADS];
 
@@ -679,7 +681,7 @@ static void PM_Friction( void ) {
 	else if ( (pm->ps->clientNum < MAX_CLIENTS||PM_ControlledByPlayer())
 		&& pm->gent
 		&& pm->gent->client
-		&& (pm->gent->client->NPC_class == CLASS_BOBAFETT || pm->gent->client->NPC_class == CLASS_ROCKETTROOPER) && pm->gent->client->moveType == MT_FLYSWIM )
+		&& (pm->gent->client->NPC_class == CLASS_BOBAFETT || pm->gent->client->NPC_class == CLASS_ROCKETTROOPER || pm->gent->client->NPC_class == CLASS_LIGHTSIDE) && pm->gent->client->moveType == MT_FLYSWIM )
 	{//player as Boba
 		drop += speed*pm_waterfriction*pml.frametime;
 	}
@@ -1090,7 +1092,7 @@ static qboolean PM_CheckJump( void )
 #if METROID_JUMP
 	if ( (pm->ps->clientNum < MAX_CLIENTS||PM_ControlledByPlayer())
 		&& pm->gent && pm->gent->client
-		&& (pm->gent->client->NPC_class == CLASS_BOBAFETT || pm->gent->client->NPC_class == CLASS_ROCKETTROOPER) )
+		&& (pm->gent->client->NPC_class == CLASS_BOBAFETT || pm->gent->client->NPC_class == CLASS_ROCKETTROOPER || pm->gent->client->NPC_class == CLASS_LIGHTSIDE ) )
 	{//player playing as boba fett
 		if ( pm->cmd.upmove > 0 )
 		{//turn on/go up
@@ -1966,6 +1968,11 @@ static qboolean PM_CheckJump( void )
 									&& traceEnt->takedamage
 									&& traceEnt->client->NPC_class != CLASS_GALAKMECH
 									&& traceEnt->client->NPC_class != CLASS_DESANN
+									&& traceEnt->client->NPC_class != CLASS_JEREC
+									&& traceEnt->client->NPC_class != CLASS_LUKE_STRONG
+									&& traceEnt->client->NPC_class != CLASS_DARKSIDE
+									&& traceEnt->client->NPC_class != CLASS_LIGHTSIDE
+									&& traceEnt->client->NPC_class != CLASS_THEFORCE
 									&& !(traceEnt->flags&FL_NO_KNOCKBACK) )
 								{//push them away and do pain
 									vec3_t oppDir, fxDir;
@@ -2782,7 +2789,7 @@ static void PM_FlyMove( void )
 	if ( (pm->ps->clientNum < MAX_CLIENTS||PM_ControlledByPlayer())
 		&& pm->gent
 		&& pm->gent->client
-		&& (pm->gent->client->NPC_class == CLASS_BOBAFETT||pm->gent->client->NPC_class == CLASS_ROCKETTROOPER) && pm->gent->client->moveType == MT_FLYSWIM )
+		&& (pm->gent->client->NPC_class == CLASS_BOBAFETT||pm->gent->client->NPC_class == CLASS_ROCKETTROOPER||pm->gent->client->NPC_class == CLASS_LIGHTSIDE) && pm->gent->client->moveType == MT_FLYSWIM )
 	{//jetpack accel
 		accel = pm_flyaccelerate;
 		jetPackMove = qtrue;
@@ -3467,7 +3474,8 @@ static float PM_DamageForDelta( int delta )
 	if ( pm->gent->NPC )
 	{
 		if ( pm->ps->weapon == WP_SABER
-			|| (pm->gent->client && pm->gent->client->NPC_class == CLASS_REBORN) )
+			|| (pm->gent->client && pm->gent->client->NPC_class == CLASS_REBORN)
+			|| (pm->gent->client && pm->gent->client->NPC_class == CLASS_GUNNER) )
 		{//FIXME: for now Jedi take no falling damage, but really they should if pushed off?
 			damage = 0;
 		}
@@ -3833,6 +3841,7 @@ static qboolean PM_TryRoll( void )
 					|| !pm->gent->client
 					|| (pm->gent->client->NPC_class != CLASS_BOBAFETT //boba can roll with it, baby
 						&& pm->gent->client->NPC_class != CLASS_REBORN //reborn using weapons other than saber can still roll
+						&& pm->gent->client->NPC_class != CLASS_GUNNER
 					))
 				{//can't roll
 					return qfalse;
@@ -4008,11 +4017,12 @@ static void PM_CrashLand( void )
 		}
 		else if ( pm->gent
 			&& pm->gent->client
-			&& (pm->gent->client->NPC_class == CLASS_BOBAFETT||pm->gent->client->NPC_class == CLASS_ROCKETTROOPER) )
+			&& (pm->gent->client->NPC_class == CLASS_BOBAFETT||pm->gent->client->NPC_class == CLASS_ROCKETTROOPER || pm->gent->client->NPC_class == CLASS_LIGHTSIDE) )
 		{
 			if ( JET_Flying( pm->gent ) )
 			{
 				if ( pm->gent->client->NPC_class == CLASS_BOBAFETT
+					|| pm->gent->client->NPC_class == CLASS_LIGHTSIDE
 					|| (pm->gent->client->NPC_class == CLASS_ROCKETTROOPER&&pm->gent->NPC&&pm->gent->NPC->rank<RANK_LT) )
 				{
 					JET_FlyStop( pm->gent );
@@ -4785,7 +4795,8 @@ static void PM_GroundTraceMissed( void ) {
 		if ( !(pm->ps->eFlags&EF_FORCE_DRAINED) )
 		{
 			//FIXME: if in a contents_falldeath brush, play the falling death anim and sound?
-			if ( pm->ps->clientNum != 0 && pm->gent && pm->gent->NPC && pm->gent->client && pm->gent->client->NPC_class != CLASS_DESANN )//desann never falls to his death
+			if ( pm->ps->clientNum != 0 && pm->gent && pm->gent->NPC && pm->gent->client && pm->gent->client->NPC_class != CLASS_DESANN && pm->gent->client->NPC_class != CLASS_LUKE_STRONG
+				&& pm->gent->client->NPC_class != CLASS_JEREC && pm->gent->client->NPC_class != CLASS_DARKSIDE && pm->gent->client->NPC_class != CLASS_LIGHTSIDE && pm->gent->client->NPC_class != CLASS_THEFORCE)//desann never falls to his death
 			{
 				if ( pm->ps->groundEntityNum == ENTITYNUM_NONE )
 				{
@@ -8119,6 +8130,13 @@ static void PM_Footsteps( void )
 							//do something else?
 							PM_JetPackAnim();
 						}
+						else if (pm->gent
+							&& pm->gent->client
+							&& pm->gent->client->NPC_class == CLASS_LIGHTSIDE
+							&& pm->gent->client->moveType == MT_FLYSWIM )
+						{
+							PM_SwimFloatAnim();
+						}
 						else
 						{
 							PM_SwimFloatAnim();
@@ -8146,6 +8164,13 @@ static void PM_Footsteps( void )
 				{//flying around with jetpack
 					//do something else?
 					PM_JetPackAnim();
+				}
+				else if (pm->gent
+					&& pm->gent->client
+					&& pm->gent->client->NPC_class == CLASS_LIGHTSIDE
+					&& pm->gent->client->moveType == MT_FLYSWIM)
+				{
+					PM_SwimFloatAnim();
 				}
 				else
 				{
@@ -10329,7 +10354,8 @@ void PM_SaberLockBreak( gentity_t *gent, gentity_t *genemy, saberLockResult_t re
 					if ( winAnim != BOTH_CCWCIRCLEBREAK )
 					{
 						if ( (!genemy->s.number&&genemy->health<=25)//player low on health
-							||(genemy->s.number&&genemy->client->NPC_class!=CLASS_KYLE&&genemy->client->NPC_class!=CLASS_LUKE&&genemy->client->NPC_class!=CLASS_TAVION&&genemy->client->NPC_class!=CLASS_ALORA&&genemy->client->NPC_class!=CLASS_DESANN)//any NPC that's not a boss character
+							||(genemy->s.number&&genemy->client->NPC_class!=CLASS_KYLE&&genemy->client->NPC_class!=CLASS_LUKE&&genemy->client->NPC_class!=CLASS_TAVION&&genemy->client->NPC_class!=CLASS_ALORA&&genemy->client->NPC_class!=CLASS_DESANN
+								&&genemy->client->NPC_class!=CLASS_JEREC&&genemy->client->NPC_class!=CLASS_TALREEK&&genemy->client->NPC_class!=CLASS_LUKE_STRONG&&genemy->client->NPC_class!=CLASS_DARKSIDE&&genemy->client->NPC_class!=CLASS_LIGHTSIDE&&genemy->client->NPC_class!=CLASS_THEFORCE)//any NPC that's not a boss character
 							||(genemy->s.number&&genemy->health<=50) )//boss character with less than 50 health left
 						{//possibly knock saber out of hand OR cut hand off!
 							if ( Q_irand( 0, 25 ) < victoryStrength
@@ -10416,9 +10442,13 @@ int G_SaberLockStrength( gentity_t *gent )
 	}
 	if ( gent->s.number >= MAX_CLIENTS )
 	{
-		if ( gent->client->NPC_class == CLASS_DESANN || gent->client->NPC_class == CLASS_LUKE )
+		if ( gent->client->NPC_class == CLASS_DESANN || gent->client->NPC_class == CLASS_LUKE || gent->client->NPC_class == CLASS_LUKE_STRONG || gent->client->NPC_class == CLASS_JEREC)
 		{
 			strength += 5+Q_irand(0,g_spskill->integer);
+		}
+		else if (gent->client->NPC_class == CLASS_DARKSIDE || gent->client->NPC_class == CLASS_LIGHTSIDE || gent->client->NPC_class == CLASS_THEFORCE)
+		{
+			strength += 5 + Q_irand(1,2);
 		}
 		else
 		{
@@ -13508,6 +13538,53 @@ static void PM_Weapon( void )
 		}
 	}
 
+	if (NPC->client->NPC_class == CLASS_CLONE
+		&& NPC->enemy->s.weapon == WP_THERMAL
+		&& pm->gent->enemy
+		&& (pm->cmd.buttons & (BUTTON_ATTACK | BUTTON_ALT_ATTACK)))
+	{
+		ucmd.forwardmove = ucmd.rightmove = ucmd.upmove == 64;
+		VectorClear(NPC->client->ps.moveDir);
+		if (ucmd.forwardmove > 1)
+		{
+			if (!TIMER_Done(NPC, "moveback") || !TIMER_Done(NPC, "movenone"))
+			{
+				ucmd.forwardmove = 0;
+				//now we have to normalize the total movement again
+				if (ucmd.rightmove > 0)
+				{
+					ucmd.rightmove = 127;
+				}
+				else if (ucmd.rightmove < 0)
+				{
+					ucmd.rightmove = -127;
+				}
+				VectorClear(NPC->client->ps.moveDir);
+				TIMER_Set(NPC, "moveback", -level.time);
+				if (TIMER_Done(NPC, "movenone"))
+				{
+					TIMER_Set(NPC, "movenone", Q_irand(1000, 2000));
+				}
+			}
+			else if (TIMER_Done(NPC, "moveforward"))
+			{//FIXME: should be if it's zero?
+				if (TIMER_Done(NPC, "lastmoveforward"))
+				{
+					int holdDirTime = Q_irand(500, 2000);
+					TIMER_Set(NPC, "moveforward", holdDirTime);
+					//so we don't keep doing this over and over again - new nav stuff makes them coast to a stop, so they could be just slowing down from the last "moveback" timer's ending...
+					TIMER_Set(NPC, "lastmoveforward", holdDirTime + Q_irand(1000, 2000));
+				}
+			}
+			else
+			{//NOTE: edge checking should stop me if this is bad... but what if it sends us colliding into the enemy?
+				//if being forced to move forward, do a full-speed moveforward
+				ucmd.forwardmove = 127;
+				VectorClear(NPC->client->ps.moveDir);
+			}
+		}
+	}
+
 	if ( !delayed_fire )
 	{//didn't just finish a fire delay
 		if ( PM_DoChargedWeapons())
@@ -13810,6 +13887,10 @@ static void PM_Weapon( void )
 				PM_SetAnim( pm, SETANIM_TORSO, BOTH_ATTACK3, SETANIM_FLAG_OVERRIDE|SETANIM_FLAG_HOLD|SETANIM_FLAG_RESTART);
 				break;
 
+			case WP_DROIDBLASTER:
+				PM_SetAnim(pm, SETANIM_TORSO, BOTH_ATTACK3, SETANIM_FLAG_OVERRIDE | SETANIM_FLAG_HOLD | SETANIM_FLAG_RESTART);
+				break;
+
 			case WP_DISRUPTOR:
 				if ( ((pm->ps->clientNum >= MAX_CLIENTS&&!PM_ControlledByPlayer())&& pm->gent && pm->gent->NPC && (pm->gent->NPC->scriptFlags&SCF_ALT_FIRE)) ||
 					((pm->ps->clientNum < MAX_CLIENTS||PM_ControlledByPlayer()) && cg.zoomMode == 2 ) )
@@ -13989,6 +14070,14 @@ static void PM_Weapon( void )
 		switch( pm->ps->weapon)
 		{
 		case WP_REPEATER:
+			// repeater is supposed to do smoke after sustained bursts
+			pm->ps->weaponShotCount++;
+			break;
+		case WP_CLONERIFLE:
+			// repeater is supposed to do smoke after sustained bursts
+			pm->ps->weaponShotCount++;
+			break;
+		case WP_REBELRIFLE:
 			// repeater is supposed to do smoke after sustained bursts
 			pm->ps->weaponShotCount++;
 			break;
@@ -14268,6 +14357,12 @@ void PM_CheckForceUseButton( gentity_t *ent, usercmd_t *ucmd  )
 			break;
 		case FP_LIGHTNING:
 			ucmd->buttons |= BUTTON_FORCE_LIGHTNING;
+			break;
+		case FP_ELEMENTS:
+			ucmd->buttons |= BUTTON_FORCE_ELEMENTS;
+			break;
+		case FP_DESTRUCTION:
+			ForceDestruction( ent );
 			break;
 		case FP_DRAIN:
 			// FIXME! Failing at WP_ForcePowerUsable(). -AReis
@@ -14603,6 +14698,7 @@ qboolean PM_WeaponOkOnVehicle( int weapon )
 	case WP_NONE:
 	case WP_SABER:
 	case WP_BLASTER:
+	case WP_DROIDBLASTER:
 	case WP_THERMAL:
 		return qtrue;
 		break;
@@ -15016,6 +15112,7 @@ void Pmove( pmove_t *pmove )
 		{//inside a vehicle?  don't do any weapon stuff
 		}
 		else if ( pm->ps->weapon == WP_BLASTER//using blaster
+		 || pm->ps->weapon == WP_DROIDBLASTER//ROGER ROGER
 		 || pm->ps->weapon == WP_THERMAL//using thermal
 		 || pm->ps->weaponstate == WEAPON_DROPPING//changing weapon - dropping
 		 || pm->ps->weaponstate == WEAPON_RAISING//changing weapon - raising

@@ -76,6 +76,9 @@ float weaponSpeed[WP_NUM_WEAPONS][2] =
 	{ 0,0 },//WP_TUSKEN_STAFF,
 	{ 0,0 },//WP_SCEPTER,
 	{ 0,0 },//WP_NOGHRI_STICK,
+	{ DROIDBLASTER_VELOCITY,DROIDBLASTER_VELOCITY },//WP_DROIDBLASTER,
+	{ CLONERIFLE_VELOCITY,CLONERIFLE_ALT_VELOCITY },//WP_CLONERIFLE,
+	{ REBELRIFLE_VELOCITY,REBELRIFLE_ALT_VELOCITY },//WP_REBELRIFLE,
 };
 
 float WP_SpeedOfMissileForWeapon( int wp, qboolean alt_fire )
@@ -346,6 +349,8 @@ qboolean W_AccuracyLoggableWeapon( int weapon, qboolean alt_fire, int mod )
 		case MOD_BRYAR_ALT:
 		case MOD_BLASTER:
 		case MOD_BLASTER_ALT:
+		case MOD_DROIDBLASTER:
+		case MOD_DROIDBLASTER_ALT:
 		case MOD_DISRUPTOR:
 		case MOD_SNIPER:
 		case MOD_BOWCASTER:
@@ -358,6 +363,8 @@ qboolean W_AccuracyLoggableWeapon( int weapon, qboolean alt_fire, int mod )
 			break;
 		//non-alt standard
 		case MOD_REPEATER:
+		case MOD_CLONERIFLE:
+		case MOD_REBELRIFLE:
 		case MOD_DEMP2:
 		case MOD_FLECHETTE:
 			return qtrue;
@@ -383,6 +390,7 @@ qboolean W_AccuracyLoggableWeapon( int weapon, qboolean alt_fire, int mod )
 		case WP_BRYAR_PISTOL:
 		case WP_BLASTER_PISTOL:
 		case WP_BLASTER:
+		case WP_DROIDBLASTER:
 		case WP_DISRUPTOR:
 		case WP_BOWCASTER:
 		case WP_ROCKET_LAUNCHER:
@@ -391,6 +399,8 @@ qboolean W_AccuracyLoggableWeapon( int weapon, qboolean alt_fire, int mod )
 			break;
 		//non-alt standard
 		case WP_REPEATER:
+		case WP_CLONERIFLE:
+		case WP_REBELRIFLE:
 		case WP_DEMP2:
 		case WP_FLECHETTE:
 			if ( !alt_fire )
@@ -497,6 +507,18 @@ void CalcMuzzlePoint( gentity_t *const ent, vec3_t forwardVec, vec3_t right, vec
 		VectorMA( muzzlePoint, 1, vrightVec, muzzlePoint );
 		break;
 
+	case WP_DROIDBLASTER:
+		ViewHeightFix(ent);
+		muzzlePoint[2] += ent->client->ps.viewheight;//By eyes
+		muzzlePoint[2] -= 1;
+		if (ent->s.number == 0)
+			VectorMA(muzzlePoint, 12, forwardVec, muzzlePoint); // player, don't set this any lower otherwise the projectile will impact immediately when your back is to a wall
+		else
+			VectorMA(muzzlePoint, 2, forwardVec, muzzlePoint); // NPC, don't set too far forwardVec otherwise the projectile can go through doors
+
+		VectorMA(muzzlePoint, 1, vrightVec, muzzlePoint);
+		break;
+
 	case WP_SABER:
 		if(ent->NPC!=NULL &&
 			(ent->client->ps.torsoAnim == TORSO_WEAPONREADY2 ||
@@ -567,6 +589,9 @@ vec3_t WP_MuzzlePoint[WP_NUM_WEAPONS] =
 	{0,		0,		0	},	// WP_ATST_SIDE,
 	{0	,	8,		0	},	// WP_STUN_BATON,
 	{12,	6,		-6	},	// WP_BRYAR_PISTOL,
+	{12,	6,		-6	},	// WP_DROIDBLASTER,
+	{12,	4.5,	-6	},	// WP_CLONERIFLE,
+	{12,	4.5,	-6	},	// WP_REBELRIFLE,
 };
 
 void WP_RocketLock( gentity_t *ent, float lockDist )
@@ -1398,6 +1423,10 @@ void FireWeapon( gentity_t *ent, qboolean alt_fire )
 		WP_FireBlaster( ent, alt_fire );
 		break;
 
+	case WP_DROIDBLASTER:
+		WP_FireDroidBlaster(ent, alt_fire);
+		break;
+
 	case WP_TUSKEN_RIFLE:
 		if ( alt_fire )
 		{
@@ -1420,6 +1449,14 @@ void FireWeapon( gentity_t *ent, qboolean alt_fire )
 
 	case WP_REPEATER:
 		WP_FireRepeater( ent, alt_fire );
+		break;
+
+	case WP_CLONERIFLE:
+		WP_FireCloneRifle(ent, alt_fire);
+		break;
+
+	case WP_REBELRIFLE:
+		WP_FireRebelRifle(ent, alt_fire);
 		break;
 
 	case WP_DEMP2:

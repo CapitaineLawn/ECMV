@@ -39,12 +39,19 @@ void FX_BryarAltProjectileThink(  centity_t *cent, const struct weaponInfo_s *we
 void FX_BlasterProjectileThink( centity_t *cent, const struct weaponInfo_s *weapon );
 void FX_BlasterAltFireThink( centity_t *cent, const struct weaponInfo_s *weapon );
 
+void FX_DroidBlasterProjectileThink(centity_t* cent, const struct weaponInfo_s* weapon);
+void FX_DroidBlasterAltFireThink(centity_t* cent, const struct weaponInfo_s* weapon);
+
 // Bowcaster
 void FX_BowcasterProjectileThink( centity_t *cent, const struct weaponInfo_s *weapon );
 
 // Heavy Repeater
 void FX_RepeaterProjectileThink( centity_t *cent, const struct weaponInfo_s *weapon );
 void FX_RepeaterAltProjectileThink( centity_t *cent, const struct weaponInfo_s *weapon );
+void FX_CloneRifleProjectileThink(centity_t* cent, const struct weaponInfo_s* weapon);
+void FX_CloneRifleAltProjectileThink(centity_t* cent, const struct weaponInfo_s* weapon);
+void FX_RebelRifleProjectileThink(centity_t* cent, const struct weaponInfo_s* weapon);
+void FX_RebelRifleAltProjectileThink(centity_t* cent, const struct weaponInfo_s* weapon);
 
 // DEMP2
 void FX_DEMP2_ProjectileThink( centity_t *cent, const struct weaponInfo_s *weapon );
@@ -103,6 +110,12 @@ func_t	funcs[] = {
 	{"atst_side_main_func",	FX_ATSTSideMainProjectileThink},
 	{"tusk_shot_func",		FX_TuskenShotProjectileThink},
 	{"noghri_shot_func",	FX_NoghriShotProjectileThink},
+	{"droidblaster_func",		FX_DroidBlasterProjectileThink},
+	{"droidblaster_alt_func",	FX_DroidBlasterAltFireThink},
+	{"clonerifle_func",		FX_CloneRifleProjectileThink},
+	{"clonerifle_alt_func",	FX_CloneRifleAltProjectileThink},
+	{"rebelrifle_func",		FX_RebelRifleProjectileThink},
+	{"rebelrifle_alt_func",	FX_RebelRifleAltProjectileThink},
 	{NULL,					NULL}
 };
 
@@ -180,6 +193,7 @@ const int defaultDamage[] = {
 	DISRUPTOR_MAIN_DAMAGE,		// WP_DISRUPTOR
 	BOWCASTER_DAMAGE,			// WP_BOWCASTER
 	REPEATER_DAMAGE,			// WP_REPEATER
+	
 	DEMP2_DAMAGE,				// WP_DEMP2
 	FLECHETTE_DAMAGE,			// WP_FLECHETTE
 	ROCKET_DAMAGE,				// WP_ROCKET_LAUNCHER
@@ -207,6 +221,9 @@ const int defaultDamage[] = {
 	0,							// WP_TUSKEN_STAFF
 	0,							// WP_SCEPTER
 	0,							// WP_NOGHRI_STICK
+	DROIDBLASTER_DAMAGE,		// WP_DROIDBLASTER
+	CLONERIFLE_DAMAGE,			// WP_CLONERIFLE
+	REBELRIFLE_DAMAGE,			// WP_REBELRIFLE
 };
 
 const int defaultAltDamage[] = {
@@ -244,6 +261,9 @@ const int defaultAltDamage[] = {
 	0,						// WP_TUSKEN_STAFF
 	0,						// WP_SCEPTER
 	0,						// WP_NOGHRI_STICK
+	DROIDBLASTER_DAMAGE,			// WP_DROIDBLASTER
+	CLONERIFLE_ALT_DAMAGE,	// WP_CLONERIFLE
+	REBELRIFLE_ALT_DAMAGE,	// WP_REBELRIFLE
 };
 
 const int defaultSplashDamage[] = {
@@ -281,6 +301,10 @@ const int defaultSplashDamage[] = {
 	0,								// WP_TUSKEN_STAFF
 	0,								// WP_SCEPTER
 	0,								// WP_NOGHRI_STICK
+	0,								// WP_DROIDBLASTER
+	0,								// WP_CLONERIFLE
+	0,								// WP_REBELRIFLE
+
 };
 
 const float defaultSplashRadius[] = {
@@ -318,6 +342,9 @@ const float defaultSplashRadius[] = {
 	0.0f,							// WP_TUSKEN_STAFF
 	0.0f,							// WP_SCEPTER
 	0.0f,							// WP_NOGHRI_STICK
+	0.0f,							// WP_DROIDBLASTER
+	0.0f,							// WP_CLONERIFLE
+	0.0f,							// WP_REBELRIFLE
 };
 
 const int defaultAltSplashDamage[] = {
@@ -355,6 +382,9 @@ const int defaultAltSplashDamage[] = {
 	0,								// WP_TUSKEN_STAFF
 	0,								// WP_SCEPTER
 	0,								// WP_NOGHRI_STICK
+	0,								// WP_DROIDBLASTER
+	CLONERIFLE_ALT_SPLASH_DAMAGE,	// WP_CLONERIFLE
+	REBELRIFLE_ALT_SPLASH_DAMAGE,	// WP_REBELRIFLE
 };
 
 const float defaultAltSplashRadius[] = {
@@ -392,6 +422,9 @@ const float defaultAltSplashRadius[] = {
 	0.0f,							// WP_TUSKEN_STAFF
 	0.0f,							// WP_SCEPTER
 	0.0f,							// WP_NOGHRI_STICK
+	0.0f,							// WP_DROIDBLASTER
+	CLONERIFLE_ALT_SPLASH_RADIUS,	// WP_CLONERIFLE
+	REBELRIFLE_ALT_SPLASH_RADIUS,	// WP_REBELRIFLE
 };
 
 wpnParms_t WpnParms[] =
@@ -525,6 +558,12 @@ void WPN_WeaponType( const char **holdBuf)
 		weaponNum = WP_SCEPTER;
 	else if (!Q_stricmp(tokenStr,"WP_NOGHRI_STICK"))
 		weaponNum = WP_NOGHRI_STICK;
+	else if (!Q_stricmp(tokenStr, "WP_DROIDBLASTER"))
+		weaponNum = WP_DROIDBLASTER;
+	else if (!Q_stricmp(tokenStr, "WP_CLONERIFLE"))
+		weaponNum = WP_CLONERIFLE;
+	else if (!Q_stricmp(tokenStr, "WP_REBELRIFLE"))
+		weaponNum = WP_REBELRIFLE;
 	else
 	{
 		weaponNum = 0;

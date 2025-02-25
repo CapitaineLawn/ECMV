@@ -884,6 +884,12 @@ qboolean AI_RefreshGroup( AIGroupInfo_t *group )
 		case WP_REPEATER:
 			group->morale -= 1;
 			break;
+		case WP_CLONERIFLE:
+			group->morale -= 1;
+			break;
+		case WP_REBELRIFLE:
+			group->morale -= 1;
+			break;
 		case WP_FLECHETTE:
 			group->morale -= 2;
 			break;

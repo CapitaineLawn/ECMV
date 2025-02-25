@@ -70,6 +70,11 @@ extern void NPC_Pain( gentity_t *self, gentity_t *inflictor, gentity_t *attacker
 extern void NPC_Touch( gentity_t *self, gentity_t *other, trace_t *trace );
 extern void NPC_Use( gentity_t *self, gentity_t *other, gentity_t *activator );
 extern float NPC_GetPainChance( gentity_t *self, int damage );
+extern void ActivateForceLightning(gentity_t* self);
+extern void DeactivateForceLightning(gentity_t* self);
+extern qboolean ForceLightningTrue(gentity_t* self);
+extern void WP_ForcePowerStop(gentity_t* self, forcePowers_t forcePower);
+extern void Sorcerer_Update(void);
 
 //
 // NPC_misc.cpp
@@ -115,6 +120,7 @@ extern void G_StartFlee( gentity_t *self, gentity_t *enemy, vec3_t dangerPoint, 
 //NPC_combat
 extern int ChooseBestWeapon( void );
 extern void NPC_ChangeWeapon( int newWeapon );
+extern void NPC_ChangeToSaber(int newWeapon);
 extern void ShootThink( void );
 extern void WeaponThink( qboolean inCombat );
 extern qboolean HaveWeapon( int weapon );

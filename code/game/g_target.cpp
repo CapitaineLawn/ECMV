@@ -997,6 +997,8 @@ void set_mission_stats_cvars( void )
 	gi.cvar_set("ui_stats_drain", va("%d",client->sess.missionStats.forceUsed[FP_DRAIN]));
 	gi.cvar_set("ui_stats_grip", va("%d",client->sess.missionStats.forceUsed[FP_GRIP]));
 	gi.cvar_set("ui_stats_lightning", va("%d",client->sess.missionStats.forceUsed[FP_LIGHTNING]));
+	gi.cvar_set("ui_stats_elements", va("%d", client->sess.missionStats.forceUsed[FP_ELEMENTS]));
+	gi.cvar_set("ui_stats_destruction", va("%d", client->sess.missionStats.forceUsed[FP_DESTRUCTION]));
 	gi.cvar_set("ui_stats_rage", va("%d",client->sess.missionStats.forceUsed[FP_RAGE]));
 
 }

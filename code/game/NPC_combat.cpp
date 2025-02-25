@@ -302,6 +302,16 @@ void G_AttackDelay( gentity_t *self, gentity_t *enemy )
 				attDelay -= Q_irand( 0, 500 );
 			}
 			break;
+		case WP_DROIDBLASTER:
+			if (self->NPC->scriptFlags & SCF_ALT_FIRE)
+			{//rapid-fire blasters
+				attDelay += Q_irand(0, 300);
+			}
+			else
+			{//regular blaster
+				attDelay -= Q_irand(0, 400);
+			}
+			break;
 		case WP_BOWCASTER:
 			attDelay += Q_irand( 0, 500 );
 			break;
@@ -309,6 +319,18 @@ void G_AttackDelay( gentity_t *self, gentity_t *enemy )
 			if ( !(self->NPC->scriptFlags&SCF_ALT_FIRE) )
 			{//rapid-fire blasters
 				attDelay += Q_irand( 0, 500 );
+			}
+			break;
+		case WP_CLONERIFLE:
+			if (!(self->NPC->scriptFlags & SCF_ALT_FIRE))
+			{//rapid-fire blasters
+				attDelay += Q_irand(0, 400);
+			}
+			break;
+		case WP_REBELRIFLE:
+			if (!(self->NPC->scriptFlags & SCF_ALT_FIRE))
+			{//rapid-fire blasters
+				attDelay += Q_irand(0, 450);
 			}
 			break;
 		case WP_FLECHETTE:
@@ -559,7 +581,8 @@ void G_SetEnemy( gentity_t *self, gentity_t *enemy )
 
 		if ( self->s.weapon == WP_BLASTER || self->s.weapon == WP_REPEATER ||
 			self->s.weapon == WP_THERMAL || self->s.weapon == WP_BLASTER_PISTOL
-			|| self->s.weapon == WP_BOWCASTER )
+			|| self->s.weapon == WP_DROIDBLASTER || self->s.weapon == WP_CLONERIFLE
+			|| self->s.weapon == WP_REBELRIFLE || self->s.weapon == WP_BOWCASTER  )
 		{//Hmm, how about sniper and bowcaster?
 			//When first get mad, aim is bad
 			//Hmm, base on game difficulty, too?  Rank?
@@ -834,6 +857,52 @@ void ChangeWeapon( gentity_t *ent, int newWeapon )
 		}
 		break;
 
+	case WP_CLONERIFLE:
+		if (ent->NPC->scriptFlags & SCF_ALT_FIRE)
+		{
+			ent->NPC->aiFlags &= ~NPCAI_BURST_WEAPON;
+			ent->NPC->burstSpacing = 1500;//attackdebounce
+		}
+		else
+		{
+			ent->NPC->aiFlags |= NPCAI_BURST_WEAPON;
+			ent->NPC->burstMin = 3;
+#ifdef BASE_SAVE_COMPAT
+			ent->NPC->burstMean = 6;
+#endif
+			ent->NPC->burstMax = 10;
+			if (g_spskill->integer == 0)
+				ent->NPC->burstSpacing = 1500;//attack debounce
+			else if (g_spskill->integer == 1)
+				ent->NPC->burstSpacing = 1000;//attack debounce
+			else
+				ent->NPC->burstSpacing = 450;//attack debounce
+		}
+		break;
+
+	case WP_REBELRIFLE:
+		if (ent->NPC->scriptFlags & SCF_ALT_FIRE)
+		{
+			ent->NPC->aiFlags &= ~NPCAI_BURST_WEAPON;
+			ent->NPC->burstSpacing = 3000;//attackdebounce
+		}
+		else
+		{
+			ent->NPC->aiFlags |= NPCAI_BURST_WEAPON;
+			ent->NPC->burstMin = 3;
+#ifdef BASE_SAVE_COMPAT
+			ent->NPC->burstMean = 6;
+#endif
+			ent->NPC->burstMax = 10;
+			if (g_spskill->integer == 0)
+				ent->NPC->burstSpacing = 2000;//attack debounce
+			else if (g_spskill->integer == 1)
+				ent->NPC->burstSpacing = 1000;//attack debounce
+			else
+				ent->NPC->burstSpacing = 550;//attack debounce
+		}
+		break;
+
 	case WP_DEMP2:
 		ent->NPC->aiFlags &= ~NPCAI_BURST_WEAPON;
 		ent->NPC->burstSpacing = 1000;//attackdebounce
@@ -928,6 +997,35 @@ void ChangeWeapon( gentity_t *ent, int newWeapon )
 			else
 				ent->NPC->burstSpacing = 500;//attack debounce
 		//	ent->NPC->burstSpacing = 1000;//attackdebounce
+		}
+		break;
+
+	case WP_DROIDBLASTER:
+		if (ent->NPC->scriptFlags & SCF_ALT_FIRE)
+		{
+			ent->NPC->aiFlags |= NPCAI_BURST_WEAPON;
+			ent->NPC->burstMin = 5;
+#ifdef BASE_SAVE_COMPAT
+			ent->NPC->burstMean = 3;
+#endif
+			ent->NPC->burstMax = 8;
+			if (g_spskill->integer == 0)
+				ent->NPC->burstSpacing = 1200;//attack debounce
+			else if (g_spskill->integer == 1)
+				ent->NPC->burstSpacing = 1000;//attack debounce
+			else
+				ent->NPC->burstSpacing = 400;//attack debounce
+		}
+		else
+		{
+			ent->NPC->aiFlags &= ~NPCAI_BURST_WEAPON;
+			if (g_spskill->integer == 0)
+				ent->NPC->burstSpacing = 1000;//attack debounce
+			else if (g_spskill->integer == 1)
+				ent->NPC->burstSpacing = 750;//attack debounce
+			else
+				ent->NPC->burstSpacing = 500;//attack debounce
+			//	ent->NPC->burstSpacing = 1000;//attackdebounce
 		}
 		break;
 
@@ -1096,6 +1194,38 @@ void NPC_ApplyWeaponFireDelay(void)
 		break;
 	}
 };
+
+void ActivateForceLightning(gentity_t* self)
+{
+	if (self && self->client)
+	{
+		ucmd.buttons |= BUTTON_FORCE_LIGHTNING;
+	}
+}
+
+void DeactivateForceLightning(gentity_t* self)
+{
+	if (self && self->client)
+	{
+		ucmd.buttons &= ~BUTTON_FORCE_LIGHTNING;
+	}
+}
+
+qboolean ForceLightningTrue(gentity_t* self)
+{
+	if (self && self->client)
+	{
+		if (self->client->ps.forcePower != FP_LIGHTNING)
+		{
+			self->client->ps.forcePower= FP_LIGHTNING;  // Active Lightning
+			ucmd.buttons |= BUTTON_FORCE_LIGHTNING;  // Simule l'appui sur le bouton
+			return qtrue; // Lightning activé
+		}
+	}
+	return qfalse; // Lightning non activé
+}
+
+
 
 /*
 -------------------------
@@ -1478,6 +1608,10 @@ float NPC_MaxDistSquaredForWeapon (void)
 	switch ( NPC->s.weapon )
 	{
 	case WP_BLASTER://scav rifle
+		return 1024 * 1024;//should be shorter?
+		break;
+
+	case WP_DROIDBLASTER://scav rifle
 		return 1024 * 1024;//should be shorter?
 		break;
 
@@ -2198,7 +2332,7 @@ qboolean NPC_ClearShot( gentity_t *ent )
 	// add aim error
 	// use weapon instead of specific npc types, although you could add certain npc classes if you wanted
 //	if ( NPC->client->playerTeam == TEAM_SCAVENGERS )
-	if( NPC->s.weapon == WP_BLASTER || NPC->s.weapon == WP_BLASTER_PISTOL ) // any other guns to check for?
+	if( NPC->s.weapon == WP_BLASTER || NPC->s.weapon == WP_BLASTER_PISTOL || NPC->s.weapon == WP_DROIDBLASTER) // any other guns to check for?
 	{
 		vec3_t	mins = { -2, -2, -2 };
 		vec3_t	maxs = {  2,  2,  2 };
@@ -2258,7 +2392,7 @@ int NPC_ShotEntity( gentity_t *ent, vec3_t impactPos )
 	// add aim error
 	// use weapon instead of specific npc types, although you could add certain npc classes if you wanted
 //	if ( NPC->client->playerTeam == TEAM_SCAVENGERS )
-	if( NPC->s.weapon == WP_BLASTER || NPC->s.weapon == WP_BLASTER_PISTOL ) // any other guns to check for?
+	if( NPC->s.weapon == WP_BLASTER || NPC->s.weapon == WP_BLASTER_PISTOL || NPC->s.weapon == WP_DROIDBLASTER) // any other guns to check for?
 	{
 		vec3_t	mins = { -2, -2, -2 };
 		vec3_t	maxs = {  2,  2,  2 };
@@ -2572,6 +2706,7 @@ float IdealDistance ( gentity_t *self )
 	case WP_BRYAR_PISTOL:
 	case WP_BLASTER_PISTOL:
 	case WP_BLASTER:
+	case WP_DROIDBLASTER:
 	default:
 		break;
 	}

@@ -58,6 +58,7 @@ void G_MissileBounceEffect( gentity_t *ent, vec3_t org, vec3_t dir, qboolean hit
 		}
 		break;
 	case WP_BLASTER:
+	case WP_DROIDBLASTER:
 	case WP_BRYAR_PISTOL:
 	case WP_BLASTER_PISTOL:
 		G_PlayEffect( "blaster/deflect", ent->currentOrigin, dir );
@@ -81,6 +82,7 @@ void G_MissileReflectEffect( gentity_t *ent, vec3_t org, vec3_t dir )
 		G_PlayEffect( "bowcaster/deflect", ent->currentOrigin, dir );
 		break;
 	case WP_BLASTER:
+	case WP_DROIDBLASTER:
 	case WP_BRYAR_PISTOL:
 	case WP_BLASTER_PISTOL:
 	default:
@@ -746,7 +748,7 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace, int hitLoc=HL_NONE )
 		if ( !(other->contents&CONTENTS_LIGHTSABER)
 			|| g_spskill->integer <= 0//on easy, it reflects all shots
 			|| (g_spskill->integer == 1 && ent->s.weapon != WP_FLECHETTE && ent->s.weapon != WP_DEMP2 )//on medium it won't reflect flechette or demp shots
-			|| (g_spskill->integer >= 2 && ent->s.weapon != WP_FLECHETTE && ent->s.weapon != WP_DEMP2 && ent->s.weapon != WP_BOWCASTER && ent->s.weapon != WP_REPEATER )//on hard it won't reflect flechette, demp, repeater or bowcaster shots
+			|| (g_spskill->integer >= 2 && ent->s.weapon != WP_FLECHETTE && ent->s.weapon != WP_DEMP2 && ent->s.weapon != WP_BOWCASTER && ent->s.weapon != WP_REPEATER && ent->s.weapon != WP_CLONERIFLE && ent->s.weapon != WP_REBELRIFLE)//on hard it won't reflect flechette, demp, repeater or bowcaster shots
 			)
 		{
 			G_BounceMissile( ent, trace );
@@ -809,7 +811,7 @@ extern bool WP_DoingMoronicForcedAnimationForForcePowers(gentity_t *ent);
 		}
 		if ( ( g_spskill->integer <= 0//on easy, it reflects all shots
 				|| (g_spskill->integer == 1 && ent->s.weapon != WP_FLECHETTE && ent->s.weapon != WP_DEMP2 )//on medium it won't reflect flechette or demp shots
-				|| (g_spskill->integer >= 2 && ent->s.weapon != WP_FLECHETTE && ent->s.weapon != WP_DEMP2 && ent->s.weapon != WP_BOWCASTER && ent->s.weapon != WP_REPEATER )//on hard it won't reflect flechette, demp, repeater or bowcaster shots
+				|| (g_spskill->integer >= 2 && ent->s.weapon != WP_FLECHETTE && ent->s.weapon != WP_DEMP2 && ent->s.weapon != WP_BOWCASTER && ent->s.weapon != WP_REPEATER && ent->s.weapon != WP_CLONERIFLE && ent->s.weapon != WP_REBELRIFLE)//on hard it won't reflect flechette, demp, repeater or bowcaster shots
 			 )
 			&& (!ent->splashDamage || !ent->splashRadius) //this would be cool, though, to "bat" the thermal det away...
 			&& ent->s.weapon != WP_NOGHRI_STICK )//gas bomb, don't reflect

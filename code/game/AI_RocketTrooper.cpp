@@ -103,7 +103,7 @@ void RT_FireDecide( void )
 
 	if ( enemyDist < MIN_ROCKET_DIST_SQUARED )//128
 	{//enemy within 128
-		if ( (NPC->client->ps.weapon == WP_FLECHETTE || NPC->client->ps.weapon == WP_REPEATER) &&
+		if ( (NPC->client->ps.weapon == WP_FLECHETTE || NPC->client->ps.weapon == WP_REPEATER || NPC->client->ps.weapon == WP_CLONERIFLE || NPC->client->ps.weapon == WP_REBELRIFLE) &&
 			(NPCInfo->scriptFlags & SCF_ALT_FIRE) )
 		{//shooting an explosive, but enemy too close, switch to primary fire
 			NPCInfo->scriptFlags &= ~SCF_ALT_FIRE;
@@ -228,6 +228,18 @@ void RT_FireDecide( void )
 								distThreshold = 65536/*256*256*/;
 							}
 							break;
+						case WP_CLONERIFLE:
+							if (NPCInfo->scriptFlags & SCF_ALT_FIRE)
+							{
+								distThreshold = 65536/*256*256*/;
+							}
+							break;
+						case WP_REBELRIFLE:
+							if (NPCInfo->scriptFlags & SCF_ALT_FIRE)
+							{
+								distThreshold = 65536/*256*256*/;
+							}
+							break;
 						case WP_CONCUSSION:
 							if ( !(NPCInfo->scriptFlags&SCF_ALT_FIRE) )
 							{
@@ -260,6 +272,18 @@ void RT_FireDecide( void )
 								break;
 							case WP_REPEATER:
 								if ( NPCInfo->scriptFlags&SCF_ALT_FIRE )
+								{
+									distThreshold = 262144/*512*512*/;
+								}
+								break;
+							case WP_CLONERIFLE:
+								if (NPCInfo->scriptFlags & SCF_ALT_FIRE)
+								{
+									distThreshold = 262144/*512*512*/;
+								}
+								break;
+							case WP_REBELRIFLE:
+								if (NPCInfo->scriptFlags & SCF_ALT_FIRE)
 								{
 									distThreshold = 262144/*512*512*/;
 								}

@@ -1432,10 +1432,12 @@ qboolean NPC_CanSurrender( void )
 		case CLASS_INTERROGATOR:		// droid
 		case CLASS_JAN:
 		case CLASS_JEDI:
+		case CLASS_CLONE:
 		case CLASS_KYLE:
 		case CLASS_LANDO:
 		case CLASS_LIZARD:
 		case CLASS_LUKE:
+		case CLASS_LUKE_STRONG:
 		case CLASS_MARK1:			// droid
 		case CLASS_MARK2:			// droid
 		case CLASS_GALAKMECH:		// droid
@@ -1457,8 +1459,15 @@ qboolean NPC_CanSurrender( void )
 		case CLASS_SWAMP:
 		case CLASS_TAVION:
 		case CLASS_ALORA:
+		case CLASS_TALREEK:
 		case CLASS_TUSKEN:
 		case CLASS_BOBAFETT:
+		case CLASS_GUNNER:
+		case CLASS_JEREC:
+		case CLASS_SORCERER:
+		case CLASS_DARKSIDE:
+		case CLASS_LIGHTSIDE:
+		case CLASS_THEFORCE:
 		case CLASS_ROCKETTROOPER:
 		case CLASS_SABER_DROID:
 		case CLASS_ASSASSIN_DROID:
@@ -1588,6 +1597,8 @@ qboolean NPC_CheckSurrender( void )
 		if ( NPC->s.weapon != WP_ROCKET_LAUNCHER
 			&& NPC->s.weapon != WP_CONCUSSION
 			&& NPC->s.weapon != WP_REPEATER
+			&& NPC->s.weapon != WP_CLONERIFLE
+			&& NPC->s.weapon != WP_REBELRIFLE
 			&& NPC->s.weapon != WP_FLECHETTE
 			&& NPC->s.weapon != WP_SABER )
 		{//jedi and heavy weapons guys never surrender

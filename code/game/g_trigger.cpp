@@ -36,6 +36,8 @@ extern qboolean SpotWouldTelefrag2( gentity_t *mover, vec3_t dest );
 extern qboolean PM_CrouchAnim( int anim );
 extern void Boba_FlyStart( gentity_t *self );
 extern qboolean Boba_Flying( gentity_t *self );
+extern void Lightside_FlyStart(gentity_t* self);
+extern qboolean Lightside_Flying(gentity_t* self);
 
 void InitTrigger( gentity_t *self ) {
 	if (!VectorCompare (self->s.angles, vec3_origin))
@@ -1222,7 +1224,7 @@ void hurt_touch( gentity_t *self, gentity_t *other, trace_t *trace )
 		if ( self->spawnflags & 32 )
 		{//falling death
 			if ( other->NPC && other->client &&
-				(other->client->NPC_class == CLASS_BOBAFETT	|| other->client->NPC_class == CLASS_ROCKETTROOPER ))
+				(other->client->NPC_class == CLASS_BOBAFETT	|| other->client->NPC_class == CLASS_ROCKETTROOPER || other->client->NPC_class == CLASS_LIGHTSIDE))
 			{//boba never falls to his death!
 				//FIXME:  fall through if jetpack broken?
 				JET_FlyStart(other);

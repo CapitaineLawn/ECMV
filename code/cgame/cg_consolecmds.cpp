@@ -291,6 +291,7 @@ static const char *gcmds[] = {
 	"force_sight",
 	"force_speed",
 	"force_throw",
+	"force_destruction",
 	"give",
 	"gloat",
 	"god",

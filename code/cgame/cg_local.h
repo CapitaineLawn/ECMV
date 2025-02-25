@@ -515,11 +515,11 @@ Ghoul2 Insert End
 } cg_t;
 
 
-#define MAX_SHOWPOWERS 12
+#define MAX_SHOWPOWERS 14
 extern int showPowers[MAX_SHOWPOWERS];
 extern const char *showPowersName[MAX_SHOWPOWERS];
 extern int force_icons[NUM_FORCE_POWERS];
-#define MAX_DPSHOWPOWERS 16
+#define MAX_DPSHOWPOWERS 18
 
 //==============================================================================
 
@@ -1116,6 +1116,10 @@ void FX_BlasterProjectileThink( centity_t *cent, const struct weaponInfo_s *weap
 void FX_BlasterAltFireThink( centity_t *cent, const struct weaponInfo_s *weapon );
 void FX_BlasterWeaponHitWall( vec3_t origin, vec3_t normal );
 void FX_BlasterWeaponHitPlayer( gentity_t *hit, vec3_t origin, vec3_t normal, qboolean humanoid );
+void FX_DroidBlasterProjectileThink(centity_t* cent, const struct weaponInfo_s* weapon);
+void FX_DroidBlasterAltFireThink(centity_t* cent, const struct weaponInfo_s* weapon);
+void FX_DroidBlasterWeaponHitWall(vec3_t origin, vec3_t normal);
+void FX_DroidBlasterWeaponHitPlayer(gentity_t* hit, vec3_t origin, vec3_t normal, qboolean humanoid);
 
 void FX_DisruptorMainShot( vec3_t start, vec3_t end );
 void FX_DisruptorAltShot( vec3_t start, vec3_t end, qboolean full );
@@ -1126,8 +1130,16 @@ void FX_BowcasterHitPlayer( vec3_t origin, vec3_t normal, qboolean humanoid );
 
 void FX_RepeaterHitWall( vec3_t origin, vec3_t normal );
 void FX_RepeaterAltHitWall( vec3_t origin, vec3_t normal );
+void FX_CloneRifleHitWall(vec3_t origin, vec3_t normal);
+void FX_CloneRifleAltHitWall(vec3_t origin, vec3_t normal);
+void FX_RebelRifleHitWall(vec3_t origin, vec3_t normal);
+void FX_RebelRifleAltHitWall(vec3_t origin, vec3_t normal);
 void FX_RepeaterHitPlayer( vec3_t origin, vec3_t normal, qboolean humanoid );
 void FX_RepeaterAltHitPlayer( vec3_t origin, vec3_t normal, qboolean humanoid );
+void FX_CloneRifleHitPlayer(vec3_t origin, vec3_t normal, qboolean humanoid);
+void FX_CloneRifleAltHitPlayer(vec3_t origin, vec3_t normal, qboolean humanoid);
+void FX_RebelRifleHitPlayer(vec3_t origin, vec3_t normal, qboolean humanoid);
+void FX_RebelRifleAltHitPlayer(vec3_t origin, vec3_t normal, qboolean humanoid);
 
 void FX_DEMP2_HitWall( vec3_t origin, vec3_t normal );
 void FX_DEMP2_HitPlayer( vec3_t origin, vec3_t normal, qboolean humanoid );

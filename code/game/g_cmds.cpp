@@ -39,6 +39,7 @@ extern void ForceRage( gentity_t *self );
 extern void ForceProtect( gentity_t *self );
 extern void ForceAbsorb( gentity_t *self );
 extern void ForceSeeing( gentity_t *self );
+extern void ForceDestruction(gentity_t* self);
 extern void G_CreateG2AttachedWeaponModel( gentity_t *ent, const char *psWeaponModel, int boltNum, int weaponNum );
 extern void G_StartMatrixEffect( gentity_t *ent, int meFlags = 0, int length = 1000, float timeScale = 0.0f, int spinTime = 0 );
 extern void ItemUse_Bacta(gentity_t *ent);
@@ -1456,6 +1457,11 @@ void ClientCommand( int clientNum ) {
 	{
 		ent = G_GetSelfForPlayerCmd();
 		ForceAbsorb(ent);
+	}
+	else if (Q_stricmp(cmd, "force_destruction") == 0)
+	{
+		ent = G_GetSelfForPlayerCmd();
+		ForceDestruction(ent);
 	}
 	else if (Q_stricmp (cmd, "force_sight") == 0)
 	{

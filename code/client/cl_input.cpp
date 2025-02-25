@@ -107,6 +107,12 @@ static void IN_UseGivenForce(void)
 	case FP_LIGHTNING:
 		genCmdNum = GENCMD_FORCE_LIGHTNING;
 		break;
+	case FP_ELEMENTS:
+		genCmdNum = GENCMD_FORCE_ELEMENTS;
+		break;
+	case FP_DESTRUCTION:
+		genCmdNum = GENCMD_FORCE_DESTRUCTION;
+		break;
 
 #ifndef JK2_MODE
 	case FP_RAGE:
@@ -329,6 +335,8 @@ void IN_Button14Down(void) {IN_KeyDown(&in_buttons[14]);}
 void IN_Button14Up(void) {IN_KeyUp(&in_buttons[14]);}
 void IN_Button15Down(void) {IN_KeyDown(&in_buttons[15]);}
 void IN_Button15Up(void) {IN_KeyUp(&in_buttons[15]);}
+void IN_Button16Down(void) { IN_KeyDown(&in_buttons[16]); }
+void IN_Button16Up(void) { IN_KeyUp(&in_buttons[16]); }
 
 
 void IN_CenterView (void) {
@@ -970,6 +978,8 @@ void CL_InitInput( void ) {
 	Cmd_AddCommand ("-attack", IN_Button0Up);
 	Cmd_AddCommand ("+force_lightning", IN_Button1Down);//force lightning
 	Cmd_AddCommand ("-force_lightning", IN_Button1Up);
+	Cmd_AddCommand("+force_elements", IN_Button16Down);//force elements
+	Cmd_AddCommand("-force_elements", IN_Button16Up);
 	Cmd_AddCommand ("+useforce", IN_Button2Down);	//use current force power
 	Cmd_AddCommand ("-useforce", IN_Button2Up);
 #ifdef JK2_MODE
@@ -1026,6 +1036,8 @@ void CL_InitInput( void ) {
 	Cmd_AddCommand ("-button14", IN_Button14Up);
 	Cmd_AddCommand ("+button15", IN_Button15Down);
 	Cmd_AddCommand ("-button15", IN_Button15Up);
+	Cmd_AddCommand("+button16", IN_Button16Down);
+	Cmd_AddCommand("-button16", IN_Button16Up);
 
 	// can add up to button31 this just brings the number of available binds up to par with MP
 

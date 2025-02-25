@@ -3814,6 +3814,11 @@ saberMoveName_t PM_SaberAttackForMovement( int forwardmove, int rightmove, int c
 										pm->ps->saberAnimLevel == SS_STAFF ||
 										pm->gent->client->NPC_class == CLASS_TAVION ||
 										pm->gent->client->NPC_class == CLASS_ALORA ||
+										pm->gent->client->NPC_class == CLASS_TALREEK ||
+										pm->gent->client->NPC_class == CLASS_LUKE_STRONG ||
+										pm->gent->client->NPC_class == CLASS_DARKSIDE ||
+										pm->gent->client->NPC_class == CLASS_LIGHTSIDE ||
+										pm->gent->client->NPC_class == CLASS_THEFORCE ||
 										(pm->gent->client->NPC_class == CLASS_DESANN && !Q_irand(0,3))) &&
 									enemyDistSq > 16384) ||
 									pm->gent->enemy->health <= 0 )//128 squared
@@ -3827,7 +3832,8 @@ saberMoveName_t PM_SaberAttackForMovement( int forwardmove, int rightmove, int c
 										}
 									}
 								}
-								else if ( ((pm->ps->saberAnimLevel >= FORCE_LEVEL_2 || pm->gent->client->NPC_class == CLASS_DESANN) && enemyDistSq > 40000) || pm->gent->enemy->health <= 0 )//200 squared
+								else if ( ((pm->ps->saberAnimLevel >= FORCE_LEVEL_2 || pm->gent->client->NPC_class == CLASS_DESANN || pm->gent->client->NPC_class == CLASS_LUKE_STRONG ||
+									pm->gent->client->NPC_class == CLASS_JEREC || pm->gent->client->NPC_class == CLASS_DARKSIDE || pm->gent->client->NPC_class == CLASS_LIGHTSIDE || pm->gent->client->NPC_class == CLASS_THEFORCE) && enemyDistSq > 40000) || pm->gent->enemy->health <= 0 )//200 squared
 								{//enemy is very faw away and I'm using medium/strong attacks
 									if ( (pm->ps->clientNum < MAX_CLIENTS||PM_ControlledByPlayer()) ||
 										( pm->gent && pm->gent->client && pm->gent->NPC && pm->gent->NPC->rank >= RANK_LT_JG && Q_irand( 0, pm->gent->NPC->rank ) > RANK_ENSIGN ) )
@@ -5993,6 +5999,10 @@ void PM_TorsoAnimation( void )
 					PM_SetAnim(pm,SETANIM_TORSO,TORSO_WEAPONREADY3,SETANIM_FLAG_NORMAL);
 					//PM_SetAnim(pm,SETANIM_LEGS,BOTH_ATTACK2,SETANIM_FLAG_NORMAL);
 					break;
+				case WP_DROIDBLASTER:
+					PM_SetAnim(pm, SETANIM_TORSO, TORSO_WEAPONREADY3, SETANIM_FLAG_NORMAL);
+					//PM_SetAnim(pm,SETANIM_LEGS,BOTH_ATTACK2,SETANIM_FLAG_NORMAL);
+					break;
 				case WP_DISRUPTOR:
 				case WP_TUSKEN_RIFLE:
 					if ( (pm->ps->weaponstate != WEAPON_FIRING
@@ -6169,6 +6179,8 @@ void PM_TorsoAnimation( void )
 			if ( !weaponBusy
 				&& pm->ps->weapon != WP_BOWCASTER
 				&& pm->ps->weapon != WP_REPEATER
+				&& pm->ps->weapon != WP_CLONERIFLE
+				&& pm->ps->weapon != WP_REBELRIFLE
 				&& pm->ps->weapon != WP_FLECHETTE
 				&& pm->ps->weapon != WP_ROCKET_LAUNCHER
 				&& pm->ps->weapon != WP_CONCUSSION
@@ -6310,6 +6322,17 @@ void PM_TorsoAnimation( void )
 					}
 					break;
 
+				case WP_DROIDBLASTER:
+					if (weaponBusy)
+					{
+						PM_SetAnim(pm, SETANIM_TORSO, TORSO_WEAPONREADY3, SETANIM_FLAG_NORMAL);
+					}
+					else
+					{
+						PM_SetAnim(pm, SETANIM_TORSO, TORSO_WEAPONIDLE3, SETANIM_FLAG_NORMAL);
+					}
+					break;
+
 				case WP_DISRUPTOR:
 				case WP_TUSKEN_RIFLE:
 					if ( (pm->ps->weaponstate != WEAPON_FIRING
@@ -6375,6 +6398,26 @@ void PM_TorsoAnimation( void )
 					else
 					{
 						PM_SetAnim(pm,SETANIM_TORSO,TORSO_WEAPONIDLE3,SETANIM_FLAG_NORMAL);
+					}
+					break;
+				case WP_CLONERIFLE:
+					if (weaponBusy)
+					{
+						PM_SetAnim(pm, SETANIM_TORSO, TORSO_WEAPONREADY3, SETANIM_FLAG_NORMAL);
+					}
+					else
+					{
+						PM_SetAnim(pm, SETANIM_TORSO, TORSO_WEAPONIDLE3, SETANIM_FLAG_NORMAL);
+					}
+					break;
+				case WP_REBELRIFLE:
+					if (weaponBusy)
+					{
+						PM_SetAnim(pm, SETANIM_TORSO, TORSO_WEAPONREADY3, SETANIM_FLAG_NORMAL);
+					}
+					else
+					{
+						PM_SetAnim(pm, SETANIM_TORSO, TORSO_WEAPONIDLE3, SETANIM_FLAG_NORMAL);
 					}
 					break;
 				case WP_TRIP_MINE:

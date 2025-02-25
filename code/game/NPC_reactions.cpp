@@ -288,9 +288,13 @@ void NPC_ChoosePainAnimation( gentity_t *self, gentity_t *other, const vec3_t po
 		{
 			pain_chance = NPC_GetPainChance( self, damage );
 		}
-		if ( self->client->NPC_class == CLASS_DESANN )
+		if ( self->client->NPC_class == CLASS_DESANN || self->client->NPC_class == CLASS_JEREC || self->client->NPC_class == CLASS_LUKE_STRONG)
 		{
 			pain_chance *= 0.5f;
+		}
+		if (self->client->NPC_class == CLASS_DARKSIDE || self->client->NPC_class == CLASS_LIGHTSIDE || self->client->NPC_class == CLASS_THEFORCE)
+		{
+			pain_chance *= 0.2f;
 		}
 	}
 
@@ -829,7 +833,47 @@ void NPC_Respond( gentity_t *self, int userNum )
 			event = Q_irand( EV_SOUND1, EV_SOUND3 );
 		}
 		break;
+	case CLASS_LUKE_STRONG:
+		if (self->enemy)
+		{
+			event = EV_COVER1;
+		}
+		else
+		{
+			event = Q_irand(EV_SOUND1, EV_SOUND3);
+		}
+		break;
 	case CLASS_JEDI:
+	case CLASS_CLONE:
+		if (self->enemy)
+		{
+			if (!Q_irand(0, 2))
+			{
+				event = Q_irand(EV_CHASE1, EV_CHASE3);
+			}
+			else if (Q_irand(0, 1))
+			{
+				event = Q_irand(EV_OUTFLANK1, EV_OUTFLANK2);
+			}
+			else
+			{
+				event = Q_irand(EV_COVER1, EV_COVER5);
+			}
+		}
+		else if (!Q_irand(0, 2))
+		{
+			event = EV_SUSPICIOUS4;
+		}
+		else if (!Q_irand(0, 1))
+		{
+			event = EV_SOUND1;
+		}
+		else
+		{
+			event = EV_CONFUSE1;
+		}
+		break;
+	case CLASS_GUNNER:
 	case CLASS_KYLE:
 		if ( !self->enemy )
 		{

@@ -901,6 +901,10 @@ void AnimateRiders( Vehicle_t *pVeh )
 		{
 			WeaponPose = WPOSE_BLASTER;
 		}
+		else if (pilotPS->weapon == WP_DROIDBLASTER)
+		{
+			WeaponPose = WPOSE_BLASTER;
+		}
 		else if (pilotPS->weapon==WP_SABER)
 		{
 			if ( (pVeh->m_ulFlags&VEH_SABERINLEFTHAND) && pilotPS->torsoAnim==BOTH_VS_ATL_TO_R_S)

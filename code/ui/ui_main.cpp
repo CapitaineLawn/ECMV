@@ -1652,6 +1652,8 @@ static void UI_CalcForceStatus(void)
 
 	darkSide = pState->forcePowerLevel[FP_GRIP] +
 		pState->forcePowerLevel[FP_LIGHTNING] +
+		pState->forcePowerLevel[FP_ELEMENTS] +
+		pState->forcePowerLevel[FP_DESTRUCTION] +
 		pState->forcePowerLevel[FP_RAGE] +
 		pState->forcePowerLevel[FP_DRAIN];
 
@@ -4467,7 +4469,7 @@ static void UI_UpdateFightingStyleChoices ( void )
 }
 #endif // !JK2_MODE
 
-#define MAX_POWER_ENUMS 16
+#define MAX_POWER_ENUMS 18
 
 typedef struct {
 	const char	*title;
@@ -4508,6 +4510,8 @@ static powerEnum_t powerEnums[MAX_POWER_ENUMS] =
 
 	{ "grip",			FP_GRIP },
 	{ "lightning",	FP_LIGHTNING },
+	{ "elements",	FP_ELEMENTS },
+	{ "destruction",	FP_DESTRUCTION },
 
 #ifndef JK2_MODE
 	{ "rage",			FP_RAGE },
@@ -4655,6 +4659,8 @@ static int UI_CountForcePowers( void ) {
 					ps->forcePowerLevel[FP_ABSORB] +
 					ps->forcePowerLevel[FP_GRIP] +
 					ps->forcePowerLevel[FP_LIGHTNING] +
+					ps->forcePowerLevel[FP_ELEMENTS] +
+					ps->forcePowerLevel[FP_DESTRUCTION] +
 					ps->forcePowerLevel[FP_RAGE] +
 					ps->forcePowerLevel[FP_DRAIN];
 	}
@@ -4665,6 +4671,8 @@ static int UI_CountForcePowers( void ) {
 					uiInfo.forcePowerLevel[FP_ABSORB] +
 					uiInfo.forcePowerLevel[FP_GRIP] +
 					uiInfo.forcePowerLevel[FP_LIGHTNING] +
+					uiInfo.forcePowerLevel[FP_ELEMENTS] +
+					uiInfo.forcePowerLevel[FP_DESTRUCTION] +
 					uiInfo.forcePowerLevel[FP_RAGE] +
 					uiInfo.forcePowerLevel[FP_DRAIN];
 	}
@@ -4810,6 +4818,8 @@ static void	UI_DemoSetForceLevels( void )
 		uiInfo.forcePowerLevel[FP_PROTECT]=0;
 		uiInfo.forcePowerLevel[FP_DRAIN]=0;
 		uiInfo.forcePowerLevel[FP_LIGHTNING]=0;
+		uiInfo.forcePowerLevel[FP_ELEMENTS] = 0;
+		uiInfo.forcePowerLevel[FP_DESTRUCTION] = 0;
 		uiInfo.forcePowerLevel[FP_RAGE]=0;
 	}
 	else
@@ -4829,6 +4839,8 @@ static void	UI_DemoSetForceLevels( void )
 		uiInfo.forcePowerLevel[FP_TELEPATHY]=1;
 		uiInfo.forcePowerLevel[FP_GRIP]=2;
 		uiInfo.forcePowerLevel[FP_LIGHTNING]=1;
+		uiInfo.forcePowerLevel[FP_ELEMENTS] = 1;
+		uiInfo.forcePowerLevel[FP_DESTRUCTION] = 1;
 		uiInfo.forcePowerLevel[FP_PROTECT]=1;
 
 		// and set the rest to zero
@@ -4844,6 +4856,8 @@ static void	UI_DemoSetForceLevels( void )
 		uiInfo.forcePowerLevel[FP_TELEPATHY]=Q_max(pState->forcePowerLevel[FP_TELEPATHY], uiInfo.forcePowerLevel[FP_TELEPATHY]);
 		uiInfo.forcePowerLevel[FP_GRIP]=Q_max(pState->forcePowerLevel[FP_GRIP], uiInfo.forcePowerLevel[FP_GRIP]);
 		uiInfo.forcePowerLevel[FP_LIGHTNING]=Q_max(pState->forcePowerLevel[FP_LIGHTNING], uiInfo.forcePowerLevel[FP_LIGHTNING]);
+		uiInfo.forcePowerLevel[FP_ELEMENTS] = Q_max(pState->forcePowerLevel[FP_ELEMENTS], uiInfo.forcePowerLevel[FP_ELEMENTS]);
+		uiInfo.forcePowerLevel[FP_DESTRUCTION] = Q_max(pState->forcePowerLevel[FP_DESTRUCTION], uiInfo.forcePowerLevel[FP_DESTRUCTION]);
 		uiInfo.forcePowerLevel[FP_PROTECT]=Q_max(pState->forcePowerLevel[FP_PROTECT], uiInfo.forcePowerLevel[FP_PROTECT]);
 
 		uiInfo.forcePowerLevel[FP_ABSORB]=Q_max(pState->forcePowerLevel[FP_ABSORB], uiInfo.forcePowerLevel[FP_ABSORB]);

@@ -1267,7 +1267,8 @@ void NPC_BSST_Patrol( void )
 				ST_Speech( NPC, SPEECH_COVER, 0 );
 				return;
 			}
-			else if (NPC->client->NPC_class==CLASS_BOBAFETT)
+			else if (NPC->client->NPC_class==CLASS_BOBAFETT
+				|| (NPC->client->NPC_class != CLASS_GUNNER && NPC->s.weapon != WP_SABER) )
 			{
 				//NPCInfo->lastAlertID = level.alertEvents[eventID].ID;
 				if ( !level.alertEvents[alertEvent].owner ||
@@ -1567,6 +1568,18 @@ static void ST_CheckFireState( void )
 						distThreshold = 65536/*256*256*/;
 					}
 					break;
+				case WP_CLONERIFLE:
+					if (NPCInfo->scriptFlags & SCF_ALT_FIRE)
+					{
+						distThreshold = 65536/*256*256*/;
+					}
+					break;
+				case WP_REBELRIFLE:
+					if (NPCInfo->scriptFlags & SCF_ALT_FIRE)
+					{
+						distThreshold = 65536/*256*256*/;
+					}
+					break;
 				case WP_CONCUSSION:
 					if ( !(NPCInfo->scriptFlags&SCF_ALT_FIRE) )
 					{
@@ -1599,6 +1612,20 @@ static void ST_CheckFireState( void )
 						break;
 					case WP_REPEATER:
 						if ( NPCInfo->scriptFlags&SCF_ALT_FIRE )
+						{
+							distThreshold = 262144/*512*512*/;
+						}
+						break;
+						break;
+					case WP_CLONERIFLE:
+						if (NPCInfo->scriptFlags & SCF_ALT_FIRE)
+						{
+							distThreshold = 262144/*512*512*/;
+						}
+						break;
+						break;
+					case WP_REBELRIFLE:
+						if (NPCInfo->scriptFlags & SCF_ALT_FIRE)
 						{
 							distThreshold = 262144/*512*512*/;
 						}
@@ -2081,7 +2108,7 @@ void ST_Commander( void )
 
 		// Check To See If The Enemy Is Too Close For Comfort
 		//----------------------------------------------------
-		if (NPC->client->NPC_class!=CLASS_ASSASSIN_DROID)
+		if (NPC->client->NPC_class!=CLASS_ASSASSIN_DROID || NPC->client->NPC_class != CLASS_CLONE)
 		{
 			if (TIMER_Done(NPC, "checkEnemyTooCloseDebouncer"))
 			{
@@ -2099,6 +2126,18 @@ void ST_Commander( void )
 					break;
 				case WP_REPEATER:
 					if ( NPCInfo->scriptFlags&SCF_ALT_FIRE )
+					{
+						distThreshold = 65536/*256*256*/;
+					}
+					break;
+				case WP_CLONERIFLE:
+					if (NPCInfo->scriptFlags & SCF_ALT_FIRE)
+					{
+						distThreshold = 65536/*256*256*/;
+					}
+					break;
+				case WP_REBELRIFLE:
+					if (NPCInfo->scriptFlags & SCF_ALT_FIRE)
 					{
 						distThreshold = 65536/*256*256*/;
 					}
@@ -2355,7 +2394,7 @@ void NPC_BSST_Attack( void )
 
 	if ( enemyDist < MIN_ROCKET_DIST_SQUARED )//128
 	{//enemy within 128
-		if ( (NPC->client->ps.weapon == WP_FLECHETTE || NPC->client->ps.weapon == WP_REPEATER) &&
+		if ( (NPC->client->ps.weapon == WP_FLECHETTE || NPC->client->ps.weapon == WP_REPEATER || NPC->client->ps.weapon == WP_CLONERIFLE || NPC->client->ps.weapon == WP_REBELRIFLE) &&
 			(NPCInfo->scriptFlags & SCF_ALT_FIRE) )
 		{//shooting an explosive, but enemy too close, switch to primary fire
 			NPCInfo->scriptFlags &= ~SCF_ALT_FIRE;
@@ -2582,6 +2621,13 @@ void NPC_BSST_Attack( void )
 	if ( NPC->client->NPC_class == CLASS_REBORN//cultist using a gun
 		&& NPCInfo->rank >= RANK_LT_COMM //commando or better
 		&& NPC->enemy->s.weapon == WP_SABER )//fighting a saber-user
+	{//commando saboteur vs. jedi/reborn
+		//see if we need to avoid their saber
+		NPC_EvasionSaber();
+	}
+
+	if (NPC->client->NPC_class == CLASS_GUNNER//cultist using a gun
+		&& NPC->enemy->s.weapon == WP_SABER)//fighting a saber-user
 	{//commando saboteur vs. jedi/reborn
 		//see if we need to avoid their saber
 		NPC_EvasionSaber();

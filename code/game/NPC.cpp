@@ -48,9 +48,13 @@ extern void Mark1_dying( gentity_t *self );
 extern void NPC_BSCinematic( void );
 extern int GetTime ( int lastTime );
 extern void G_CheckCharmed( gentity_t *self );
+extern qboolean Lightside_Flying(gentity_t* self);
 extern qboolean Boba_Flying( gentity_t *self );
 extern qboolean RT_Flying( gentity_t *self );
 extern qboolean Jedi_CultistDestroyer( gentity_t *self );
+extern void LightSide_update();
+extern void Jerec_Update();
+extern void Sorcerer_Update();
 extern void Boba_Update();
 extern bool Boba_Flee();
 extern bool Boba_Tactics();
@@ -1900,6 +1904,25 @@ void NPC_RunBehavior( int team, int bState )
 	{//force-only reborn
 		NPC_BehaviorSet_Jedi( bState );
 	}
+	else if (NPC->client->NPC_class == CLASS_SORCERER && NPC->client->ps.weapon == WP_MELEE)
+	{//Sorcerer
+		NPC_BehaviorSet_Jedi(bState);
+	}
+	else if (NPC->client->NPC_class == CLASS_GUNNER)
+	{
+		Boba_Update();
+		if (NPCInfo->surrenderTime)
+		{
+			Boba_Flee();
+		}
+		else
+		{
+			if (!Boba_Tactics())
+			{
+				NPC_BehaviorSet_Jedi(bState);
+			}
+		}
+	}
 	else if ( NPC->client->NPC_class == CLASS_BOBAFETT )
 	{
 		Boba_Update();
@@ -1921,6 +1944,32 @@ void NPC_RunBehavior( int team, int bState )
 				}
 			}
 		}
+	}
+	else if (NPC->client->NPC_class == CLASS_LIGHTSIDE)
+	{
+		LightSide_update();
+		if (Lightside_Flying)
+		{
+			NPC_BehaviorSet_Seeker(bState);
+		}
+		else
+		{
+			NPC_BehaviorSet_Jedi(bState);
+		}
+	}
+	else if (NPC->client->NPC_class == CLASS_SORCERER)
+	{
+		NPC_BehaviorSet_Jedi(bState);
+		Sorcerer_Update();
+	}
+	else if (NPC->client->NPC_class == CLASS_CLONE)
+	{
+		NPC_BehaviorSet_Jedi(bState);
+	}
+	else if (NPC->client->NPC_class == CLASS_JEREC)
+	{
+		NPC_BehaviorSet_Jedi(bState);
+		Jerec_Update();
 	}
 	else if ( NPC->client->NPC_class == CLASS_ROCKETTROOPER )
 	{//bounty hunter

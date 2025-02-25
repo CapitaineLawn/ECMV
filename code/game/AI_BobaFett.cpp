@@ -50,6 +50,12 @@ qboolean	Boba_Flying( gentity_t *self );
 void		Boba_FlyStart( gentity_t *self );
 void		Boba_FlyStop( gentity_t *self );
 
+// Light Side !!!
+qboolean	Lightside_Flying(gentity_t* self);
+void		Lightside_FlyStart(gentity_t* self);
+void		Lightside_FlyStop(gentity_t* self);
+void		LightSide_update(void);
+
 // Called From NPC_Pain()
 //-----------------------------
 void		Boba_Pain( gentity_t *self, gentity_t *inflictor, int damage, int mod);
@@ -75,6 +81,7 @@ bool		Boba_Respawn();
 //-----------------------------------------
 void		Boba_Fire();
 void		Boba_FireDecide();
+void		Jedi_Combat(void);
 
 // Local: Called From Tactics()
 //----------------------------
@@ -127,6 +134,7 @@ extern cvar_t*		g_bobaDebug;
 	#include <stdio.h>
 	#define STDIO_H_INC
 #endif
+#include <NPC.cpp>
 void	Boba_Printf(const char * format, ...)
 {
 	if (g_bobaDebug->integer==0)
@@ -201,6 +209,7 @@ enum	EBobaTacticsState
 	BTS_RIFLE,			// Uses Jedi / Seeker Movement
 	BTS_MISSILE,		// Uses Jedi / Seeker Movement
 	BTS_SNIPER,			// Uses Special Movement Internal To This File
+	BTS_SABER,			// Lightsaber MFKR !!!
 	BTS_FLAMETHROW,		// Locked In Place
 
 	// Waiting
@@ -378,7 +387,7 @@ qboolean Boba_Flying( gentity_t *self )
 ////////////////////////////////////////////////////////////////////////////////////////
 bool	Boba_CanSeeEnemy( gentity_t *self )
 {
-	assert(self && self->NPC && self->client && self->client->NPC_class==CLASS_BOBAFETT);
+	assert((self && self->NPC && self->client && self->client->NPC_class==CLASS_BOBAFETT) && (self && self->NPC && self->client || self && self->NPC && self->client->NPC_class == CLASS_GUNNER));
  	return ((level.time - self->NPC->enemyLastSeenTime)<1000);
 }
 
@@ -404,6 +413,7 @@ void	Boba_Pain( gentity_t *self, gentity_t *inflictor, int damage, int mod)
 void Boba_FlyStart( gentity_t *self )
 {//switch to seeker AI for a while
 	if ( TIMER_Done( self, "jetRecharge" )
+		&& NPC->client->NPC_class != CLASS_GUNNER
 		&& !Boba_Flying( self ) )
 	{
 		self->client->ps.gravity = 0;
@@ -441,6 +451,7 @@ void Boba_FlyStop( gentity_t *self )
 	self->client->moveType = MT_RUNJUMP;
 	//Stop effect
 	self->client->jetPackTime = 0;
+	self->client->NPC_class != CLASS_GUNNER;
 	if ( self->genericBolt1 != -1 )
 	{
 		G_StopEffect( "boba/jetSP", self->playerModel, self->genericBolt1, self->s.number );
@@ -459,6 +470,67 @@ void Boba_FlyStop( gentity_t *self )
 		self->count = 0; // SEEKER shot ammo count
 		TIMER_Set( self, "jetRecharge", Q_irand( 1000, 5000 ) );
 		TIMER_Set( self, "jumpChaseDebounce", Q_irand( 500, 2000 ) );
+	}
+}
+
+qboolean Lightside_Flying(gentity_t* self)
+{
+	assert(self && self->client && self->client->NPC_class == CLASS_LIGHTSIDE);//self->NPC &&
+	return ((qboolean)(self->client->moveType == MT_FLYSWIM));
+}
+
+void Lightside_FlyStart(gentity_t* self)
+{//switch to seeker AI for a while
+	if (TIMER_Done(self, "jetRecharge")
+		&& NPC->client->NPC_class == CLASS_LIGHTSIDE
+		&& !Lightside_Flying(self))
+	{
+		self->client->ps.gravity = 0;
+		self->svFlags |= SVF_CUSTOM_GRAVITY;
+		self->client->moveType = MT_FLYSWIM;
+		self->client->jetPackTime = level.time + Q_irand(2000, 8000);
+		ActivateForceLightning;
+
+		if (self->genericBolt1 != -1)
+		{
+			G_PlayEffect(G_EffectIndex("force/heal2"), self->playerModel, self->genericBolt1, self->s.number, self->currentOrigin, qtrue, qtrue);
+		}
+		if (self->genericBolt2 != -1)
+		{
+			G_PlayEffect(G_EffectIndex("force/heal2"), self->playerModel, self->genericBolt2, self->s.number, self->currentOrigin, qtrue, qtrue);
+		}
+		if (self->NPC)
+		{
+			self->count = Q3_INFINITE; // SEEKER shot ammo count
+		}
+
+	}
+}
+
+void Lightside_FlyStop(gentity_t* self)
+{
+	self->client->ps.gravity = g_gravity->value;
+	self->svFlags &= ~SVF_CUSTOM_GRAVITY;
+	self->client->moveType = MT_RUNJUMP;
+	//Stop effect
+	self->client->jetPackTime = 0;
+	self->client->NPC_class == CLASS_LIGHTSIDE;
+	if (self->genericBolt1 != -1)
+	{
+		G_StopEffect("force/heal2", self->playerModel, self->genericBolt1, self->s.number);
+	}
+	if (self->genericBolt2 != -1)
+	{
+		G_StopEffect("force/heal2", self->playerModel, self->genericBolt2, self->s.number);
+	}
+
+	WP_ForcePowerStop(NPC, FP_LIGHTNING);
+
+	self->s.loopSound = 0;
+	if (self->NPC)
+	{
+		self->count = 0; // SEEKER shot ammo count
+		TIMER_Set(self, "jumpChaseDebounce", Q_irand(500, 2000));
 	}
 }
 
@@ -702,12 +774,12 @@ void	Boba_Fire()
 				}
 			}
 
-			// Occasionally Alt Fire
-			//-----------------------
-			if (NPCInfo->scriptFlags&SCF_ALT_FIRE)
+		case WP_SABER:
+			// Activer le mode combat Jedi lorsqu'il a un sabre laser
+			if (NPC->client && NPC->client->ps.weapon == WP_SABER)
 			{
-				ucmd.buttons &= ~BUTTON_ATTACK;
-				ucmd.buttons |=  BUTTON_ALT_ATTACK;
+				NPC->client->ps.saberInFlight = qfalse;  // Assurer que le sabre est bien en main
+				Jedi_Combat();               // Activer les mécaniques de combat Jedi
 			}
 			break;
 		}
@@ -718,18 +790,17 @@ void	Boba_Fire()
 ////////////////////////////////////////////////////////////////////////////////////////
 // Call this function to see if Fett should fire his current weapon
 ////////////////////////////////////////////////////////////////////////////////////////
-void Boba_FireDecide( void )
+void Boba_FireDecide(void)
 {
-	// Any Reason Not To Shoot?
-	//--------------------------
-	if (!NPC ||											// Only NPCs
-		!NPC->client ||									// Only Clients
-		 NPC->client->NPC_class!=CLASS_BOBAFETT ||		// Only Boba
-		!NPC->enemy ||									// Only If There Is An Enemy
-		 NPC->s.weapon==WP_NONE ||						// Only If Using A Valid Weapon
-		!TIMER_Done(NPC, "nextAttackDelay") ||			// Only If Ready To Shoot Again
-		!Boba_CanSeeEnemy(NPC)							// Only If Enemy Recently Seen
-		)
+	float enemyDistance = Distance(NPC->currentOrigin, NPC->enemy->currentOrigin);
+
+	if (!NPC ||
+		!NPC->client ||
+		(NPC->client->NPC_class != CLASS_BOBAFETT && NPC->client->NPC_class != CLASS_GUNNER) ||  // Correction ici !
+		!NPC->enemy ||
+		NPC->s.weapon == WP_NONE ||
+		!TIMER_Done(NPC, "nextAttackDelay") ||
+		!Boba_CanSeeEnemy(NPC))
 	{
 		return;
 	}
@@ -739,21 +810,46 @@ void Boba_FireDecide( void )
 	switch (NPC->s.weapon)
 	{
 	case WP_ROCKET_LAUNCHER:
-		if (Distance(NPC->currentOrigin, NPC->enemy->currentOrigin)>400.0f)
+		if (enemyDistance > 1200.0f )
+		{
+			Boba_Fire();
+		}
+		break;
+
+	case WP_CONCUSSION:
+		if (enemyDistance > 1200.0f)
 		{
 			Boba_Fire();
 		}
 		break;
 
 	case WP_DISRUPTOR:
-		// TODO: Add Conditions Here
-		Boba_Fire();
+		if (enemyDistance >= 200.0f && enemyDistance <= 1200.0f)
+		{
+			Boba_Fire();
+		}
 		break;
 
 	case WP_BLASTER:
-		// TODO: Add Conditions Here
-		Boba_Fire();
+		if (enemyDistance >= 200.0f && enemyDistance <= 1200.0f)
+		{
+			Boba_Fire();
+		}
 		break;
+
+	case WP_REPEATER:
+		if (enemyDistance >= 200.0f && enemyDistance <= 1200.0f)
+		{
+			Boba_Fire();
+		}
+		break;
+
+	case WP_SABER:
+		if (enemyDistance < 200.0f)
+		{
+			Boba_Fire();
+		break;
+		}
 	}
 }
 
@@ -781,7 +877,7 @@ void	Boba_TacticsSelect()
 {
 	// Don't Change Tactics For A Little While
 	//------------------------------------------
-	TIMER_Set(NPC, "Boba_TacticsSelect", Q_irand(8000, 15000));
+	TIMER_Set(NPC, "Boba_TacticsSelect", Q_irand(900, 7000));
 	int		nextState = NPCInfo->localState;
 
 
@@ -798,9 +894,37 @@ void	Boba_TacticsSelect()
 	//-----------------------
 	if (!enemyAlive)
 	{
-		nextState = BTS_RIFLE;
+		if (NPC->client->NPC_class == CLASS_GUNNER)
+		{
+			int currentState = nextState; // Stocke l'état actuel pour éviter les changements inutiles
+
+			if (enemyDistance < 200.0f && TIMER_Done(NPC, "BTS_SABER"))
+			{
+				nextState = BTS_SABER;
+				Boba_ChangeWeapon(WP_SABER);
+			}
+			else if (enemyDistance >= 200.0f && enemyDistance <= 1200.0f && TIMER_Done(NPC, "BTS_RIFLE"))
+			{
+				nextState = BTS_RIFLE;
+				int rangedWeapons[] = { WP_REPEATER, WP_DISRUPTOR, WP_BLASTER };
+				Boba_ChangeWeapon(rangedWeapons[rand() % 3]);
+			}
+			else if (enemyDistance > 1200.0f && TIMER_Done(NPC, "BTS_ROCKET"))
+			{
+				nextState = BTS_MISSILE;
+				int heavyWeapons[] = { WP_ROCKET_LAUNCHER, WP_CONCUSSION };
+				Boba_ChangeWeapon(heavyWeapons[rand() % 2]);
+			}
+		}
+		else if (NPC->client->NPC_class == CLASS_BOBAFETT)
+		{
+			nextState = BTS_RIFLE;
+		}
 	}
-	else if (enemyInFlameRange)
+
+	else if ( (enemyInFlameRange)
+		&& NPC->client->NPC_class != CLASS_GUNNER
+		&& NPC->client->NPC_class == CLASS_SORCERER)
 	{
 		// If It's Been Long Enough Since Our Last Flame Blast, Try To Torch The Enemy
 		//-----------------------------------------------------------------------------
@@ -811,7 +935,7 @@ void	Boba_TacticsSelect()
 
 		// Otherwise, He's Probably Too Close, So Try To Get Clear Of Him
 		//----------------------------------------------------------------
-		else
+		else if (NPC->client->NPC_class != CLASS_SORCERER)
 		{
 			nextState = BTS_RIFLE;
 		}
@@ -881,19 +1005,38 @@ void	Boba_TacticsSelect()
 
 		case BTS_RIFLE:
 			Boba_Printf("NEW TACTIC: Rifle");
-			Boba_ChangeWeapon(WP_BLASTER);
+
+			// Choisir aléatoirement entre WP_BLASTER et WP_REPEATER
+			if (Q_irand(0, 1) == 0)
+			{
+				Boba_ChangeWeapon(WP_BLASTER);
+			}
+			else
+			{
+				Boba_ChangeWeapon(WP_REPEATER);
+			}
 			break;
 
 		case BTS_MISSILE:
 			Boba_Printf("NEW TACTIC: Rocket Launcher");
-			Boba_ChangeWeapon(WP_ROCKET_LAUNCHER);
+			if (Q_irand(0, 1) == 0)
+			{
+				Boba_ChangeWeapon(WP_ROCKET_LAUNCHER);
+			}
+			else
+			{
+				Boba_ChangeWeapon(WP_CONCUSSION);
+			}
 			break;
 
 		case BTS_SNIPER:
 			Boba_Printf("NEW TACTIC: Sniper");
 			Boba_ChangeWeapon(WP_DISRUPTOR);
 			break;
-
+		case BTS_SABER:
+			Boba_Printf("NEW TACTIC: MFK SABER !!!");
+			Boba_ChangeWeapon(WP_SABER);
+			break;
 		case BTS_AMBUSHWAIT:
 			Boba_Printf("NEW TACTIC: Ambush");
 			Boba_ChangeWeapon(WP_NONE);
@@ -912,10 +1055,67 @@ void	Boba_TacticsSelect()
 ////////////////////////////////////////////////////////////////////////////////////////
 bool	Boba_Tactics()
 {
+	float	enemyDistance = Distance(NPC->currentOrigin, NPC->enemy->currentOrigin);
+
 	if (!NPC->enemy)
 	{
 		return false;
 	}
+
+	if (NPC->client->NPC_class == CLASS_GUNNER)
+	{
+		float currentWeapon = NPC->client->ps.weapon; // Stocker l'arme actuelle
+
+		if (enemyDistance < 200.0f )
+		{
+			if (currentWeapon != WP_SABER) // Changer seulement si ce n'est pas déjà le sabre
+			{
+				Boba_ChangeWeapon(WP_SABER);
+				NPC_ChangeWeapon(WP_SABER);
+			}
+		}
+		else if (enemyDistance >= 200.0f && enemyDistance <= 1200.0f)
+		{
+			if (currentWeapon == WP_SABER || currentWeapon == WP_ROCKET_LAUNCHER || currentWeapon == WP_CONCUSSION) // Exclure WP_SABER si on est à plus de 128 unités
+			{
+				int randomChoice = Q_irand(0, 2); // Générer un choix entre 3 armes
+
+				if (randomChoice == 0)
+				{
+					Boba_ChangeWeapon(WP_BLASTER);
+					NPC_ChangeWeapon(WP_BLASTER);
+				}
+				else if (randomChoice == 1)
+				{
+					Boba_ChangeWeapon(WP_REPEATER);
+					NPC_ChangeWeapon(WP_REPEATER);
+				}
+				else
+				{
+					Boba_ChangeWeapon(WP_DISRUPTOR);
+					NPC_ChangeWeapon(WP_DISRUPTOR);
+				}
+			}
+		}
+		else if (enemyDistance > 1200.0f )
+		{
+			if (currentWeapon == WP_SABER || currentWeapon == WP_BLASTER || currentWeapon == WP_REPEATER || currentWeapon == WP_DISRUPTOR)
+			{
+				// Exclure toutes les armes de courte et moyenne portée si on est à plus de 400 unités
+				if (Q_irand(0, 1) == 0)
+				{
+					Boba_ChangeWeapon(WP_ROCKET_LAUNCHER);
+					NPC_ChangeWeapon(WP_ROCKET_LAUNCHER);
+				}
+				else
+				{
+					Boba_ChangeWeapon(WP_CONCUSSION);
+					NPC_ChangeWeapon(WP_CONCUSSION);
+				}
+			}
+		}
+	}
+
 
 	// Think About Changing Tactics
 	//------------------------------
@@ -928,7 +1128,8 @@ bool	Boba_Tactics()
 	//----------------------------------------------
 	if (!NPCInfo->localState ||
 		 NPCInfo->localState==BTS_RIFLE ||
-		 NPCInfo->localState==BTS_MISSILE)
+		 NPCInfo->localState == BTS_MISSILE ||
+		 NPCInfo->localState==BTS_SABER)
 	{
 		return false;
 	}
@@ -949,7 +1150,7 @@ bool	Boba_Tactics()
 
 	// Ambush Wait
 	//------------
-	else if (NPCInfo->localState==BTS_AMBUSHWAIT)
+	else if ( (NPCInfo->localState==BTS_AMBUSHWAIT) && NPC->client->NPC_class != CLASS_GUNNER )
 	{
 		Boba_DoAmbushWait( NPC );
 	}
@@ -1147,7 +1348,23 @@ void	Boba_Update()
 	}
 }
 
-
+void LightSide_update()
+{ 
+	if (NPC->client->ps.groundEntityNum == ENTITYNUM_NONE
+	&& NPC->client->ps.forceJumpZStart
+	&& NPC->client->NPC_class == CLASS_LIGHTSIDE
+	&& !Q_irand(0, 5)
+	&& NPC->client->ps.forcePower == FP_LIGHTNING)
+	{//take off
+		Lightside_FlyStart(NPC);
+	}
+	else if (NPC->client->ps.groundEntityNum == ENTITYNUM_NONE
+		&& NPC->client->ps.forceJumpZStart
+		&& !Q_irand(0, 10))
+	{//take off
+		Lightside_FlyStart(NPC);
+	}
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -1283,8 +1500,6 @@ bool	Boba_Flee()
 			}
 		}
 	}
-
-
 	NPC_UpdateAngles( qtrue, qtrue );
 	return true;
 }

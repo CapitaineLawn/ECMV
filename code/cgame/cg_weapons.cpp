@@ -237,7 +237,14 @@ void CG_RegisterWeapon( int weaponNum ) {
 		//cgs.effects.forceInvincibility	= theFxScheduler.RegisterEffect( "force/invin" );
 		cgs.effects.forceConfusion		= theFxScheduler.RegisterEffect( "force/confusion" );
 		cgs.effects.forceLightning		= theFxScheduler.RegisterEffect( "force/lightning" );
+		cgs.effects.forceLightning_red = theFxScheduler.RegisterEffect("force/lightning_red");
 		cgs.effects.forceLightningWide	= theFxScheduler.RegisterEffect( "force/lightningwide" );
+		cgs.effects.forceLightningWide_red = theFxScheduler.RegisterEffect("force/lightningwide_red");
+		cgs.effects.forceBeam = theFxScheduler.RegisterEffect("force/forcebeamwide");
+		cgs.effects.forceWind = theFxScheduler.RegisterEffect("force/wind");
+		cgs.effects.forceFire = theFxScheduler.RegisterEffect("force/fire");
+		cgs.effects.forceFireBlue = theFxScheduler.RegisterEffect("force/fireblue");
+		cgs.effects.forceFireGreen = theFxScheduler.RegisterEffect("force/firegreen");
 		//new Jedi Academy force power effects
 		cgs.effects.forceDrain		= theFxScheduler.RegisterEffect( "mp/drain" );
 		cgs.effects.forceDrainWide	= theFxScheduler.RegisterEffect( "mp/drainwide" );
@@ -362,6 +369,21 @@ void CG_RegisterWeapon( int weaponNum ) {
 		cgs.media.purpleSaberGlowShader		= cgi_R_RegisterShader( "gfx/effects/sabers/purple_glow" );
 		cgs.media.purpleSaberCoreShader		= cgi_R_RegisterShader( "gfx/effects/sabers/purple_line" );
 
+		// Epic Challenge Mod V Colors
+		cgs.media.whiteSaberGlowShader = cgi_R_RegisterShader("gfx/effects/sabers/white_glow");
+		cgs.media.whiteSaberCoreShader = cgi_R_RegisterShader("gfx/effects/sabers/white_line");
+		cgs.media.goldSaberGlowShader = cgi_R_RegisterShader("gfx/effects/sabers/gold_glow");
+		cgs.media.goldSaberCoreShader = cgi_R_RegisterShader("gfx/effects/sabers/gold_line");
+		cgs.media.kyleSaberGlowShader = cgi_R_RegisterShader("gfx/effects/sabers/kyle_glow");
+		cgs.media.kyleSaberCoreShader = cgi_R_RegisterShader("gfx/effects/sabers/kyle_line");
+		cgs.media.lukeSaberGlowShader = cgi_R_RegisterShader("gfx/effects/sabers/luke_glow");
+		cgs.media.lukeSaberCoreShader = cgi_R_RegisterShader("gfx/effects/sabers/luke_line");
+		cgs.media.jerecSaberGlowShader = cgi_R_RegisterShader("gfx/effects/sabers/jerec_glow");
+		cgs.media.jerecSaberCoreShader = cgi_R_RegisterShader("gfx/effects/sabers/jerec_line");
+		cgs.media.maraSaberGlowShader = cgi_R_RegisterShader("gfx/effects/sabers/mara_glow");
+		cgs.media.maraSaberCoreShader = cgi_R_RegisterShader("gfx/effects/sabers/mara_line");
+
+
 		cgs.media.forceCoronaShader			= cgi_R_RegisterShaderNoMip( "gfx/hud/force_swirl" );
 
 		//new Jedi Academy force graphics
@@ -407,6 +429,16 @@ void CG_RegisterWeapon( int weaponNum ) {
 		theFxScheduler.RegisterEffect( "blaster/smoke_bolton" ); // note: this will be called game side
 		break;
 
+	case WP_DROIDBLASTER:
+		cgs.effects.droidblasterShotEffect = theFxScheduler.RegisterEffect("droidblaster/shot");
+		theFxScheduler.RegisterEffect("droidblaster/NPCshot");
+		//		cgs.effects.blasterOverchargeEffect		= theFxScheduler.RegisterEffect( "blaster/overcharge" );
+		cgs.effects.droidblasterWallImpactEffect = theFxScheduler.RegisterEffect("droidblaster/wall_impact");
+		cgs.effects.droidblasterFleshImpactEffect = theFxScheduler.RegisterEffect("droidblaster/flesh_impact");
+		theFxScheduler.RegisterEffect("droidblaster/deflect");
+		theFxScheduler.RegisterEffect("droidblaster/smoke_bolton"); // note: this will be called game side
+		break;
+
 	case WP_DISRUPTOR:
 		theFxScheduler.RegisterEffect( "disruptor/wall_impact" );
 		theFxScheduler.RegisterEffect( "disruptor/flesh_impact" );
@@ -449,6 +481,26 @@ void CG_RegisterWeapon( int weaponNum ) {
 //		theFxScheduler.RegisterEffect( "repeater/alt_wall_impact2" );
 //		theFxScheduler.RegisterEffect( "repeater/flesh_impact" );
 		theFxScheduler.RegisterEffect( "repeater/concussion" );
+		break;
+
+	case WP_CLONERIFLE:
+		theFxScheduler.RegisterEffect("clonerifle/muzzle_smoke");
+		theFxScheduler.RegisterEffect("clonerifle/projectile");
+		theFxScheduler.RegisterEffect("clonerifle/alt_projectile");
+		theFxScheduler.RegisterEffect("clonerifle/wall_impact");
+		//		theFxScheduler.RegisterEffect( "repeater/alt_wall_impact2" );
+		//		theFxScheduler.RegisterEffect( "repeater/flesh_impact" );
+		theFxScheduler.RegisterEffect("clonerifle/concussion");
+		break;
+
+	case WP_REBELRIFLE:
+		theFxScheduler.RegisterEffect("rebelrifle/muzzle_smoke");
+		theFxScheduler.RegisterEffect("rebelrifle/projectile");
+		theFxScheduler.RegisterEffect("rebelrifle/alt_projectile");
+		theFxScheduler.RegisterEffect("rebelrifle/wall_impact");
+		//		theFxScheduler.RegisterEffect( "repeater/alt_wall_impact2" );
+		//		theFxScheduler.RegisterEffect( "repeater/flesh_impact" );
+		theFxScheduler.RegisterEffect("rebelrifle/concussion");
 		break;
 
 	case WP_DEMP2:
@@ -999,16 +1051,57 @@ void CG_AddViewWeapon( playerState_t *ps )
 
 		VectorCopy( cent->gent->client->renderInfo.handLPoint, temp );
 		VectorMA( temp, -5, cg.refdef.viewaxis[0], temp );
-		if ( cent->gent->client->ps.forcePowerLevel[FP_LIGHTNING] > FORCE_LEVEL_2 )
+		if (cent->gent->client->ps.forcePowerLevel[FP_LIGHTNING] >= FORCE_LEVEL_2 &&
+			cent->gent->client->ps.forcePowerLevel[FP_LIGHTNING] <= FORCE_LEVEL_3)
 		{//arc
 			//vec3_t	fxAxis[3];
 			//AnglesToAxis( tAng, fxAxis );
 			theFxScheduler.PlayEffect( cgs.effects.forceLightningWide, temp, cg.refdef.viewaxis );
 		}
+		else if (cent->gent->client->ps.forcePowerLevel[FP_LIGHTNING] == FORCE_LEVEL_4)
+		{//line
+			//AngleVectors( tAng, fxDir, NULL, NULL );
+			theFxScheduler.PlayEffect(cgs.effects.forceBeam, temp, cg.refdef.viewaxis[0]);
+		}
+		else if (cent->gent->client->ps.forcePowerLevel[FP_LIGHTNING] == FORCE_LEVEL_5)
+		{//arc
+			//vec3_t	fxAxis[3];
+			//AnglesToAxis( tAng, fxAxis );
+			theFxScheduler.PlayEffect(cgs.effects.forceLightningWide_red, temp, cg.refdef.viewaxis);
+		}
 		else
 		{//line
 			//AngleVectors( tAng, fxDir, NULL, NULL );
 			theFxScheduler.PlayEffect( cgs.effects.forceLightning, temp, cg.refdef.viewaxis[0] );
+		}
+	}
+
+	if (cent->gent && cent->gent->client && cent->gent->client->ps.forcePowersActive & (1 << FP_ELEMENTS))
+	{//doing the electrocuting
+		vec3_t temp;//tAng, fxDir,
+		//VectorSet( tAng, cent->pe.torso.pitchAngle, cent->pe.torso.yawAngle, 0 );
+
+		VectorCopy(cent->gent->client->renderInfo.handLPoint, temp);
+		VectorMA(temp, -5, cg.refdef.viewaxis[0], temp);
+		if (cent->gent->client->ps.forcePowerLevel[FP_ELEMENTS] == FORCE_LEVEL_1)
+		{//line
+			//AngleVectors( tAng, fxDir, NULL, NULL );
+			theFxScheduler.PlayEffect(cgs.effects.forceWind, temp, cg.refdef.viewaxis[0]);
+		}
+		else if (cent->gent->client->ps.forcePowerLevel[FP_ELEMENTS] == FORCE_LEVEL_2)
+		{//line
+			//AngleVectors( tAng, fxDir, NULL, NULL );
+			theFxScheduler.PlayEffect(cgs.effects.forceFireBlue, temp, cg.refdef.viewaxis[0]);
+		}
+		else if (cent->gent->client->ps.forcePowerLevel[FP_ELEMENTS] == FORCE_LEVEL_3)
+		{//line
+			//AngleVectors( tAng, fxDir, NULL, NULL );
+			theFxScheduler.PlayEffect(cgs.effects.forceFire, temp, cg.refdef.viewaxis[0]);
+		}
+		else if (cent->gent->client->ps.forcePowerLevel[FP_ELEMENTS] == FORCE_LEVEL_4)
+		{//line
+			//AngleVectors( tAng, fxDir, NULL, NULL );
+			theFxScheduler.PlayEffect(cgs.effects.forceFireGreen, temp, cg.refdef.viewaxis[0]);
 		}
 	}
 
@@ -1365,7 +1458,61 @@ void CG_AddViewWeapon( playerState_t *ps )
 			cent->gent->client->ps.weaponShotCount = 0;
 		}
 	}
+
+	if (ps->weapon == WP_CLONERIFLE && ps->weaponstate == WEAPON_FIRING)
+	{
+		if (cent->gent && cent->gent->client && cent->gent->client->ps.weaponstate != WEAPON_FIRING)
+		{
+			int	ct = 0;
+
+			// the more continuous shots we've got, the more smoke we spawn
+			if (cent->gent->client->ps.weaponShotCount > 60) {
+				ct = 5;
+			}
+			else if (cent->gent->client->ps.weaponShotCount > 35) {
+				ct = 3;
+			}
+			else if (cent->gent->client->ps.weaponShotCount > 15) {
+				ct = 1;
+			}
+
+			for (int i = 0; i < ct; i++)
+			{
+				theFxScheduler.PlayEffect("clonerifle/muzzle_smoke", cent->currentState.clientNum);
+			}
+
+			cent->gent->client->ps.weaponShotCount = 0;
+		}
+	}
+
+	if (ps->weapon == WP_REBELRIFLE && ps->weaponstate == WEAPON_FIRING)
+	{
+		if (cent->gent && cent->gent->client && cent->gent->client->ps.weaponstate != WEAPON_FIRING)
+		{
+			int	ct = 0;
+
+			// the more continuous shots we've got, the more smoke we spawn
+			if (cent->gent->client->ps.weaponShotCount > 60) {
+				ct = 5;
+			}
+			else if (cent->gent->client->ps.weaponShotCount > 35) {
+				ct = 3;
+			}
+			else if (cent->gent->client->ps.weaponShotCount > 15) {
+				ct = 1;
+			}
+
+			for (int i = 0; i < ct; i++)
+			{
+				theFxScheduler.PlayEffect("clonerifle/muzzle_smoke", cent->currentState.clientNum);
+			}
+
+			cent->gent->client->ps.weaponShotCount = 0;
+		}
+	}
 }
+
+
 
 /*
 ==============================================================================
@@ -1809,7 +1956,7 @@ void CG_DrawWeaponSelect( void )
  	for ( i = 1 ; i < MAX_PLAYER_WEAPONS ; i++ )
 	{
 		if ((bits & ( 1 << i ))  &&
-			(!isOnVeh || i==WP_NONE || i==WP_SABER || i==WP_BLASTER))
+			(!isOnVeh || i==WP_NONE || i==WP_SABER || i==WP_BLASTER || i == WP_DROIDBLASTER))
 		{
 			count++;
 		}
@@ -1902,7 +2049,7 @@ void CG_DrawWeaponSelect( void )
 		}
 		if (isOnVeh)
 		{
-			if ( i != WP_NONE && i!=WP_SABER && i!=WP_BLASTER )
+			if ( i != WP_NONE && i!=WP_SABER && i!=WP_BLASTER && i!= WP_DROIDBLASTER)
 			{
 				if ( i == WP_CONCUSSION )
 				{
@@ -2003,7 +2150,7 @@ void CG_DrawWeaponSelect( void )
 		}
 		if (isOnVeh)
 		{
-			if ( i != WP_NONE && i!=WP_SABER && i!=WP_BLASTER )
+			if ( i != WP_NONE && i!=WP_SABER && i!=WP_BLASTER && i!=WP_DROIDBLASTER)
 			{
 				if ( i == WP_CONCUSSION )
 				{
@@ -2090,7 +2237,7 @@ qboolean CG_WeaponSelectable( int i, int original, qboolean dpMode )
 
 	if ( G_IsRidingVehicle(cg_entities[0].gent) )
 	{
-		if (G_IsRidingTurboVehicle(cg_entities[0].gent) || (i!=WP_NONE && i!=WP_SABER && i!=WP_BLASTER) )
+		if (G_IsRidingTurboVehicle(cg_entities[0].gent) || (i!=WP_NONE && i!=WP_SABER && i!=WP_BLASTER && i!=WP_DROIDBLASTER) )
 		{
 			return qfalse;
 		}
@@ -2234,6 +2381,18 @@ void CG_NextWeapon_f( void ) {
 		}
 		else if ( cg.weaponSelect == WP_DET_PACK )
 		{
+			cg.weaponSelect = WP_DROIDBLASTER;
+		}
+		else if (cg.weaponSelect == WP_DROIDBLASTER)
+		{
+			cg.weaponSelect = WP_CLONERIFLE;
+		}
+		else if (cg.weaponSelect == WP_CLONERIFLE)
+		{
+			cg.weaponSelect = WP_REBELRIFLE;
+		}
+		else if (cg.weaponSelect == WP_REBELRIFLE)
+		{
 			cg.weaponSelect = firstWeapon;
 		}
 		else
@@ -2289,6 +2448,18 @@ void CG_DPNextWeapon_f( void ) {
 			cg.DataPadWeaponSelect = WP_ROCKET_LAUNCHER;
 		}
 		else if ( cg.DataPadWeaponSelect == WP_DET_PACK )
+		{
+			cg.DataPadWeaponSelect = WP_DROIDBLASTER;
+		}
+		else if (cg.DataPadWeaponSelect == WP_DROIDBLASTER)
+		{
+			cg.DataPadWeaponSelect = WP_CLONERIFLE;
+		}
+		else if (cg.DataPadWeaponSelect == WP_CLONERIFLE)
+		{
+			cg.DataPadWeaponSelect = WP_REBELRIFLE;
+		}
+		else if (cg.DataPadWeaponSelect == WP_REBELRIFLE)
 		{
 			cg.DataPadWeaponSelect = FIRST_WEAPON;
 		}
@@ -2349,6 +2520,18 @@ void CG_DPPrevWeapon_f( void )
 		else if ( cg.DataPadWeaponSelect == WP_MELEE )
 		{
 			cg.DataPadWeaponSelect = WP_DET_PACK;
+		}
+		else if (cg.DataPadWeaponSelect == WP_DROIDBLASTER)
+		{
+			cg.DataPadWeaponSelect = WP_MELEE;
+		}
+		else if (cg.DataPadWeaponSelect == WP_CLONERIFLE)
+		{
+			cg.DataPadWeaponSelect = WP_DROIDBLASTER;
+		}
+		else if (cg.DataPadWeaponSelect == WP_REBELRIFLE)
+		{
+			cg.DataPadWeaponSelect = WP_CLONERIFLE;
 		}
 		else
 		{
@@ -2438,6 +2621,18 @@ void CG_PrevWeapon_f( void ) {
 		else if ( cg.weaponSelect == WP_MELEE )
 		{
 			cg.weaponSelect = WP_DET_PACK;
+		}
+		else if (cg.weaponSelect == WP_DROIDBLASTER)
+		{
+			cg.weaponSelect = WP_MELEE;
+		}
+		else if (cg.weaponSelect == WP_CLONERIFLE)
+		{
+			cg.weaponSelect = WP_DROIDBLASTER;
+		}
+		else if (cg.weaponSelect == WP_REBELRIFLE)
+		{
+			cg.weaponSelect = WP_CLONERIFLE;
 		}
 		else
 		{
@@ -2943,6 +3138,10 @@ void CG_MissileHitWall( centity_t *cent, int weapon, vec3_t origin, vec3_t dir, 
 		FX_BlasterWeaponHitWall( origin, dir );
 		break;
 
+	case WP_DROIDBLASTER:
+		FX_DroidBlasterWeaponHitWall(origin, dir);
+		break;
+
 	case WP_BOWCASTER:
 		FX_BowcasterHitWall( origin, dir );
 		break;
@@ -2955,6 +3154,28 @@ void CG_MissileHitWall( centity_t *cent, int weapon, vec3_t origin, vec3_t dir, 
 		else
 		{
 			FX_RepeaterHitWall( origin, dir );
+		}
+		break;
+
+	case WP_CLONERIFLE:
+		if (altFire)
+		{
+			FX_CloneRifleAltHitWall(origin, dir);
+		}
+		else
+		{
+			FX_CloneRifleHitWall(origin, dir);
+		}
+		break;
+
+	case WP_REBELRIFLE:
+		if (altFire)
+		{
+			FX_RebelRifleAltHitWall(origin, dir);
+		}
+		else
+		{
+			FX_RebelRifleHitWall(origin, dir);
 		}
 		break;
 
@@ -3080,6 +3301,10 @@ void CG_MissileHitPlayer( centity_t *cent, int weapon, vec3_t origin, vec3_t dir
 		FX_BlasterWeaponHitPlayer( other, origin, dir, humanoid );
 		break;
 
+	case WP_DROIDBLASTER:
+		FX_DroidBlasterWeaponHitPlayer(other, origin, dir, humanoid);
+		break;
+
 	case WP_BOWCASTER:
 		FX_BowcasterHitPlayer( origin, dir, humanoid );
 		break;
@@ -3092,6 +3317,28 @@ void CG_MissileHitPlayer( centity_t *cent, int weapon, vec3_t origin, vec3_t dir
 		else
 		{
 			FX_RepeaterHitPlayer( origin, dir, humanoid );
+		}
+		break;
+
+	case WP_CLONERIFLE:
+		if (altFire)
+		{
+			FX_CloneRifleAltHitPlayer(origin, dir, humanoid);
+		}
+		else
+		{
+			FX_CloneRifleHitPlayer(origin, dir, humanoid);
+		}
+		break;
+
+	case WP_REBELRIFLE:
+		if (altFire)
+		{
+			FX_RebelRifleAltHitPlayer(origin, dir, humanoid);
+		}
+		else
+		{
+			FX_RebelRifleHitPlayer(origin, dir, humanoid);
 		}
 		break;
 

@@ -276,8 +276,11 @@ qboolean NPC_UpdateAngles ( qboolean doPitch, qboolean doYaw )
 	{
 		if (NPC->s.weapon==WP_BLASTER_PISTOL ||
 			NPC->s.weapon==WP_BLASTER ||
+			NPC->s.weapon==WP_DROIDBLASTER ||
 			NPC->s.weapon==WP_BOWCASTER ||
 			NPC->s.weapon==WP_REPEATER ||
+			NPC->s.weapon==WP_CLONERIFLE ||
+			NPC->s.weapon==WP_REBELRIFLE ||
 			NPC->s.weapon==WP_FLECHETTE ||
 			NPC->s.weapon==WP_BRYAR_PISTOL ||
 			NPC->s.weapon==WP_NOGHRI_STICK)
@@ -1623,6 +1626,9 @@ extern void RT_FlyStop( gentity_t *self );
 extern qboolean Boba_Flying( gentity_t *self );
 extern void Boba_FlyStart( gentity_t *self );
 extern void Boba_FlyStop( gentity_t *self );
+extern qboolean Lightside_Flying(gentity_t* self);
+extern void Lightside_FlyStart(gentity_t* self);
+extern void Lightside_FlyStop(gentity_t* self);
 
 qboolean JET_Flying( gentity_t *self )
 {
@@ -1637,6 +1643,10 @@ qboolean JET_Flying( gentity_t *self )
 	else if ( self->client->NPC_class == CLASS_ROCKETTROOPER )
 	{
 		return (RT_Flying(self));
+	}
+	else if (self->client->NPC_class == CLASS_LIGHTSIDE)
+	{
+		return (Lightside_Flying(self));
 	}
 	else
 	{
@@ -1659,6 +1669,10 @@ void JET_FlyStart( gentity_t *self )
 	{
 		RT_FlyStart( self );
 	}
+	else if (self->client->NPC_class == CLASS_LIGHTSIDE)
+	{
+		Lightside_FlyStart( self );
+	}
 }
 
 void JET_FlyStop( gentity_t *self )
@@ -1674,5 +1688,9 @@ void JET_FlyStop( gentity_t *self )
 	else if ( self->client->NPC_class == CLASS_ROCKETTROOPER )
 	{
 		RT_FlyStop( self );
+	}
+	else if (self->client->NPC_class == CLASS_LIGHTSIDE)
+	{
+		Lightside_FlyStop( self );
 	}
 }

@@ -258,6 +258,8 @@ typedef enum //# setType_e
 	SET_FORCE_MIND_TRICK,//## %t="BOOL_TYPES" # Causes this ent to do a jedi mind trick at whatever level of mind trick they have (may not do anything for NPCs?)
 	SET_FORCE_GRIP,//## %t="BOOL_TYPES" # Causes this ent to grip their enemy at whatever level of grip they have (will grip until scripted to stop)
 	SET_FORCE_LIGHTNING,//## %t="BOOL_TYPES" # Causes this ent to lightning at whatever level of lightning they have (will lightning until scripted to stop)
+	SET_FORCE_ELEMENTS,
+	SET_FORCE_DESTRUCTION,
 	SET_FORCE_SABERTHROW,//## %t="BOOL_TYPES" # Causes this ent to throw their saber at whatever level of saber throw they have (will throw saber until scripted to stop)
 	SET_FORCE_RAGE,//## %t="BOOL_TYPES" # Causes this ent to go into force rage at whatever level of force rage they have
 	SET_FORCE_PROTECT,//## %t="BOOL_TYPES" # Causes this ent to start a force protect at whatever level of force protect they have
@@ -291,6 +293,8 @@ typedef enum //# setType_e
 	SET_FORCE_MINDTRICK_LEVEL,//## %t="FORCE_LEVELS" # Change force power level
 	SET_FORCE_GRIP_LEVEL,//## %t="FORCE_LEVELS" # Change force power level
 	SET_FORCE_LIGHTNING_LEVEL,//## %t="FORCE_LEVELS" # Change force power level
+	SET_FORCE_ELEMENTS_LEVEL,
+	SET_FORCE_DESTRUCTION_LEVEL,
 	SET_SABER_THROW,//## %t="FORCE_LEVELS" # Change force power level
 	SET_SABER_DEFENSE,//## %t="FORCE_LEVELS" # Change force power level
 	SET_SABER_OFFENSE,//## %t="SABER_STYLES" # Change force power level

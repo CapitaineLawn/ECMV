@@ -161,6 +161,7 @@ extern float forceJumpHeight[];
 extern float forceJumpHeightMax[];
 
 extern float forcePushPullRadius[];
+extern float forceDestructionRadius[];
 
 extern void ForceSpeed( gentity_t *self, int duration = 0 );
 extern float forceSpeedValue[];
@@ -178,9 +179,9 @@ enum
 	FORCE_LEVEL_1,
 	FORCE_LEVEL_2,
 	FORCE_LEVEL_3,
+	FORCE_LEVEL_4,
 	NUM_FORCE_POWER_LEVELS
 };
-#define	FORCE_LEVEL_4 (FORCE_LEVEL_3+1)
 #define	FORCE_LEVEL_5 (FORCE_LEVEL_4+1)
 
 enum

@@ -113,12 +113,18 @@ static void IT_Name(const char **holdBuf)
 		itemNum = ITM_BRYAR_PISTOL_PICKUP;
 	else if (!Q_stricmp(tokenStr,"ITM_BLASTER_PICKUP"))
 		itemNum = ITM_BLASTER_PICKUP;
+	else if (!Q_stricmp(tokenStr, "ITM_DROIDBLASTER_PICKUP"))
+		itemNum = ITM_DROIDBLASTER_PICKUP;
 	else if (!Q_stricmp(tokenStr,"ITM_DISRUPTOR_PICKUP"))
 		itemNum = ITM_DISRUPTOR_PICKUP;
 	else if (!Q_stricmp(tokenStr,"ITM_BOWCASTER_PICKUP"))
 		itemNum = ITM_BOWCASTER_PICKUP;
 	else if (!Q_stricmp(tokenStr,"ITM_REPEATER_PICKUP"))
 		itemNum = ITM_REPEATER_PICKUP;
+	else if (!Q_stricmp(tokenStr, "ITM_CLONERIFLE_PICKUP"))
+		itemNum = ITM_CLONERIFLE_PICKUP;
+	else if (!Q_stricmp(tokenStr, "ITM_REBELRIFLE_PICKUP"))
+		itemNum = ITM_REBELRIFLE_PICKUP;
 	else if (!Q_stricmp(tokenStr,"ITM_DEMP2_PICKUP"))
 		itemNum = ITM_DEMP2_PICKUP;
 	else if (!Q_stricmp(tokenStr,"ITM_FLECHETTE_PICKUP"))
@@ -207,6 +213,14 @@ static void IT_Name(const char **holdBuf)
 	else if (!Q_stricmp(tokenStr,"ITM_FORCE_LIGHTNING_PICKUP"))
 	{
 		itemNum = ITM_FORCE_LIGHTNING_PICKUP;
+	}
+	else if (!Q_stricmp(tokenStr, "ITM_FORCE_ELEMENTS_PICKUP"))
+	{
+		itemNum = ITM_FORCE_ELEMENTS_PICKUP;
+	}
+	else if (!Q_stricmp(tokenStr, "ITM_FORCE_DESTRUCTION_PICKUP"))
+	{
+		itemNum = ITM_FORCE_DESTRUCTION_PICKUP;
 	}
 	else if (!Q_stricmp(tokenStr,"ITM_FORCE_SABERTHROW_PICKUP"))
 	{
@@ -374,6 +388,12 @@ static void IT_Tag(const char **holdBuf)
 		tag = WP_SCEPTER;
 	else if (!Q_stricmp(tokenStr,"WP_NOGHRI_STICK"))
 		tag = WP_NOGHRI_STICK;
+	else if (!Q_stricmp(tokenStr, "WP_DROIDBLASTER"))
+		tag = WP_DROIDBLASTER;
+	else if (!Q_stricmp(tokenStr, "WP_CLONERIFLE"))
+		tag = WP_CLONERIFLE;
+	else if (!Q_stricmp(tokenStr, "WP_REBELRIFLE"))
+		tag = WP_REBELRIFLE;
 	else if (!Q_stricmp(tokenStr,"AMMO_FORCE"))
 		tag = AMMO_FORCE;
 	else if (!Q_stricmp(tokenStr,"AMMO_BLASTER"))
@@ -424,6 +444,14 @@ static void IT_Tag(const char **holdBuf)
 	{
 		tag = FP_LIGHTNING;
 	}
+	else if (!Q_stricmp(tokenStr, "FP_ELEMENTS"))
+	{
+		tag = FP_ELEMENTS;
+		}
+	else if (!Q_stricmp(tokenStr, "FP_DESTRUCTION"))
+	{
+		tag = FP_DESTRUCTION;
+		}
 	else if (!Q_stricmp(tokenStr,"FP_SABERTHROW"))
 	{
 		tag = FP_SABERTHROW;

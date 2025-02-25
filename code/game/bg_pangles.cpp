@@ -964,6 +964,11 @@ float G_ForceWallJumpStrength( void )
 	return (forceJumpStrength[FORCE_LEVEL_3]/2.5f);
 }
 
+float G_ForceWallJumpStrength_bounce(void)
+{
+	return (forceJumpStrength[FORCE_LEVEL_4] / 2.5f);
+}
+
 qboolean PM_AdjustAngleForWallJump( gentity_t *ent, usercmd_t *ucmd, qboolean doMove )
 {
 	if ( PM_InReboundJump( ent->client->ps.legsAnim )

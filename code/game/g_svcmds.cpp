@@ -269,7 +269,7 @@ static void Svcmd_SaberColor_f()
 	{
 		gi.Printf( "Usage:  saberColor <saberNum> <blade1 color> <blade2 color> ... <blade8 color>\n" );
 		gi.Printf( "valid saberNums:  1 or 2\n" );
-		gi.Printf( "valid colors:  red, orange, yellow, green, blue, and purple\n" );
+		gi.Printf( "valid colors:  red, orange, yellow, green, blue, and purple... but also white, gold, kyle, luke, jerec and mara... Enjoy !\n" );
 
 		return;
 	}
@@ -307,15 +307,17 @@ struct SetForceCmd {
 
 SetForceCmd SetForceTable[NUM_FORCE_POWERS] = {
 	{ "forceHeal",			"setForceHeal",			FORCE_LEVEL_3			},
-	{ "forceJump",			"setForceJump",			FORCE_LEVEL_3			},
-	{ "forceSpeed",			"setForceSpeed",		FORCE_LEVEL_3			},
-	{ "forcePush",			"setForcePush",			FORCE_LEVEL_3			},
-	{ "forcePull",			"setForcePull",			FORCE_LEVEL_3			},
+	{ "forceJump",			"setForceJump",			FORCE_LEVEL_4			},
+	{ "forceSpeed",			"setForceSpeed",		FORCE_LEVEL_4			},
+	{ "forcePush",			"setForcePush",			FORCE_LEVEL_4			},
+	{ "forcePull",			"setForcePull",			FORCE_LEVEL_4			},
 	{ "forceMindTrick",		"setForceMindTrick",	FORCE_LEVEL_4			},
-	{ "forceGrip",			"setForceGrip",			FORCE_LEVEL_3			},
-	{ "forceLightning",		"setForceLightning",	FORCE_LEVEL_3			},
-	{ "saberThrow",			"setSaberThrow",		FORCE_LEVEL_3			},
-	{ "saberDefense",		"setSaberDefense",		FORCE_LEVEL_3			},
+	{ "forceGrip",			"setForceGrip",			FORCE_LEVEL_4			},
+	{ "forceLightning",		"setForceLightning",	FORCE_LEVEL_5			},
+	{ "forceElements",		"setForceElements",		FORCE_LEVEL_4			},
+	{ "forceDestruction",	"setForceDestruction",	FORCE_LEVEL_3			},
+	{ "saberThrow",			"setSaberThrow",		FORCE_LEVEL_4			},
+	{ "saberDefense",		"setSaberDefense",		FORCE_LEVEL_4			},
 	{ "saberOffense",		"setSaberOffense",		SS_NUM_SABER_STYLES-1	},
 	{ "forceRage",			"setForceRage",			FORCE_LEVEL_3			},
 	{ "forceProtect",		"setForceProtect",		FORCE_LEVEL_3			},
@@ -916,6 +918,8 @@ static svcmd_t svcmds[] = {
 	{ "setForceSpeed",				Svcmd_ForceSetLevel_f<FP_SPEED>,			CMD_CHEAT },
 	{ "setForceGrip",				Svcmd_ForceSetLevel_f<FP_GRIP>,				CMD_CHEAT },
 	{ "setForceLightning",			Svcmd_ForceSetLevel_f<FP_LIGHTNING>,		CMD_CHEAT },
+	{ "setForceElements",			Svcmd_ForceSetLevel_f<FP_ELEMENTS>,			CMD_CHEAT },
+	{ "setForceDestruction",		Svcmd_ForceSetLevel_f<FP_DESTRUCTION>,		CMD_CHEAT },
 	{ "setMindTrick",				Svcmd_ForceSetLevel_f<FP_TELEPATHY>,		CMD_CHEAT },
 	{ "setSaberDefense",			Svcmd_ForceSetLevel_f<FP_SABER_DEFENSE>,	CMD_CHEAT },
 	{ "setSaberOffense",			Svcmd_ForceSetLevel_f<FP_SABER_OFFENSE>,	CMD_CHEAT },

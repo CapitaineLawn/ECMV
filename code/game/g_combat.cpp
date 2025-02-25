@@ -224,6 +224,9 @@ gentity_t *TossClientItems( gentity_t *self )
 				case WP_BLASTER:
 					dropped->count = 15;
 					break;
+				case WP_DROIDBLASTER:
+					dropped->count = 20;
+					break;
 				case WP_DISRUPTOR:
 					dropped->count = 20;
 					break;
@@ -232,6 +235,12 @@ gentity_t *TossClientItems( gentity_t *self )
 					break;
 				case WP_REPEATER:
 					dropped->count = 20;
+					break;
+				case WP_CLONERIFLE:
+					dropped->count = 25;
+					break;
+				case WP_REBELRIFLE:
+					dropped->count = 15;
 					break;
 				case WP_DEMP2:
 					dropped->count = 10;
@@ -3809,6 +3818,7 @@ extern void RunEmplacedWeapon( gentity_t *ent, usercmd_t **ucmd );
 			//self->owner = old;
 		}
 		if ( self->client->NPC_class == CLASS_BOBAFETT
+			|| self->client->NPC_class == CLASS_LIGHTSIDE
 			|| self->client->NPC_class == CLASS_ROCKETTROOPER )
 		{
 			if ( self->client->moveType == MT_FLYSWIM )
@@ -5338,6 +5348,10 @@ void G_TrackWeaponUsage( gentity_t *self, gentity_t *inflictor, int add, int mod
 		case MOD_BLASTER_ALT:
 			weapon = WP_BLASTER;
 			break;
+		case MOD_DROIDBLASTER:
+		case MOD_DROIDBLASTER_ALT:
+			weapon = WP_DROIDBLASTER;
+			break;
 		case MOD_DISRUPTOR:
 		case MOD_SNIPER:
 			weapon = WP_DISRUPTOR;
@@ -5349,6 +5363,14 @@ void G_TrackWeaponUsage( gentity_t *self, gentity_t *inflictor, int add, int mod
 		case MOD_REPEATER:
 		case MOD_REPEATER_ALT:
 			weapon = WP_REPEATER;
+			break;
+		case MOD_CLONERIFLE:
+		case MOD_CLONERIFLE_ALT:
+			weapon = WP_CLONERIFLE;
+			break;
+		case MOD_REBELRIFLE:
+		case MOD_REBELRIFLE_ALT:
+			weapon = WP_REBELRIFLE;
 			break;
 		case MOD_DEMP2:
 		case MOD_DEMP2_ALT:
@@ -5445,6 +5467,11 @@ qboolean G_ImmuneToGas( gentity_t *ent )
 		|| ent->client->NPC_class == CLASS_SWAMPTROOPER
 		|| ent->client->NPC_class == CLASS_TUSKEN
 		|| ent->client->NPC_class == CLASS_BOBAFETT
+		|| ent->client->NPC_class == CLASS_CLONE
+		|| ent->client->NPC_class == CLASS_LIGHTSIDE
+		|| ent->client->NPC_class == CLASS_DARKSIDE
+		|| ent->client->NPC_class == CLASS_THEFORCE
+		|| ent->client->NPC_class == CLASS_SORCERER
 		|| ent->client->NPC_class == CLASS_ROCKETTROOPER
 		|| ent->client->NPC_class == CLASS_SABER_DROID
 		|| ent->client->NPC_class == CLASS_ASSASSIN_DROID
@@ -5697,6 +5724,32 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, const
 		damage *= 7;
 	}
 
+	if ((client) &&
+		(mod == MOD_CLONERIFLE || mod == MOD_CLONERIFLE_ALT) &&
+		(
+			client->NPC_class == CLASS_MARK1 ||
+			client->NPC_class == CLASS_JEDI ||
+			client->NPC_class == CLASS_REBORN ||
+			client->NPC_class == CLASS_SORCERER ||
+			client->NPC_class == CLASS_SHADOWTROOPER ||
+			client->NPC_class == CLASS_GUNNER
+			)
+		)
+	{
+		damage *= 4;
+	}
+
+	if ((client) &&
+		(mod == MOD_REBELRIFLE || mod == MOD_REBELRIFLE_ALT) &&
+		(
+			client->NPC_class == CLASS_STORMTROOPER ||
+			client->NPC_class == CLASS_GUNNER
+			)
+		)
+	{
+		damage *= 4;
+	}
+
 	if ( client && client->NPC_class == CLASS_HAZARD_TROOPER )
 	{
 		if ( mod == MOD_SABER
@@ -5868,6 +5921,8 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, const
 						break;
 					}
 				case MOD_REPEATER_ALT:
+				case MOD_CLONERIFLE_ALT:
+				case MOD_REBELRIFLE_ALT:
 				case MOD_FLECHETTE_ALT:
 				case MOD_ROCKET:
 				case MOD_ROCKET_ALT:
@@ -5895,7 +5950,11 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, const
 				case MOD_BRYAR_ALT:
 				case MOD_BLASTER:
 				case MOD_BLASTER_ALT:
+				case MOD_DROIDBLASTER:
+				case MOD_DROIDBLASTER_ALT:
 				case MOD_REPEATER:
+				case MOD_CLONERIFLE:
+				case MOD_REBELRIFLE:
 				case MOD_FLECHETTE:
 				case MOD_WATER:
 				case MOD_SLIME:

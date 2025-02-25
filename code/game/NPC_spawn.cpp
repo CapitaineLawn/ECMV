@@ -35,6 +35,8 @@ extern qboolean G_CheckInSolid (gentity_t *self, qboolean fix);
 extern void ClientUserinfoChanged( int clientNum );
 extern qboolean SpotWouldTelefrag2( gentity_t *mover, vec3_t dest );
 extern void Jedi_Cloak( gentity_t *self );
+extern void Lightside_Cloak(gentity_t* self);
+
 extern void Saboteur_Cloak( gentity_t *self );
 
 extern void G_MatchPlayerWeapon( gentity_t *ent );
@@ -189,10 +191,12 @@ void G_ClassSetDontFlee( gentity_t *self )
 	case CLASS_INTERROGATOR:		// droid
 	case CLASS_JAN:
 	case CLASS_JEDI:
+	case CLASS_CLONE:			// THE BEST OF THEM ALL
 	case CLASS_KYLE:
 	case CLASS_LANDO:
 	case CLASS_LIZARD:
 	case CLASS_LUKE:
+	case CLASS_LUKE_STRONG:
 	case CLASS_MARK1:			// droid
 	case CLASS_MARK2:			// droid
 	case CLASS_GALAKMECH:		// droid
@@ -209,7 +213,14 @@ void G_ClassSetDontFlee( gentity_t *self )
 	case CLASS_SWAMP:
 	case CLASS_TAVION:
 	case CLASS_ALORA:
+	case CLASS_TALREEK:
 	case CLASS_BOBAFETT:
+	case CLASS_GUNNER:
+	case CLASS_JEREC:
+	case CLASS_SORCERER:
+	case CLASS_DARKSIDE:
+	case CLASS_LIGHTSIDE:
+	case CLASS_THEFORCE:
 	case CLASS_SABER_DROID:
 	case CLASS_ASSASSIN_DROID:
 	case CLASS_PLAYER:
@@ -300,12 +311,28 @@ void NPC_SetMiscDefaultData( gentity_t *ent )
 	{
 		ent->flags |= FL_NO_KNOCKBACK;
 	}
+	else if (ent->client->NPC_class == CLASS_CLONE)
+	{
+		ent->NPC->aiFlags |= NPCAI_SUBBOSS_CHARACTER;
+		ent->NPC->scriptFlags |= (SCF_CHASE_ENEMIES | SCF_DONT_FLEE | SCF_LOOK_FOR_ENEMIES);
+	}
 	else if ( ent->client->NPC_class == CLASS_SABOTEUR )
 	{//can cloak
 		ent->NPC->aiFlags |= NPCAI_SHIELDS;//give them the ability to cloak
 		if ( (ent->spawnflags&16) )
 		{//start cloaked
 			Saboteur_Cloak( ent );
+		}
+	}
+	else if (ent->client->NPC_class == CLASS_LIGHTSIDE)
+	{//can cloak
+		ent->client->ps.forcePowersKnown |= (1 << FP_LEVITATION);
+		ent->client->ps.forcePowerLevel[FP_LEVITATION] = FORCE_LEVEL_3;
+		ent->client->ps.forcePower = 100;
+		ent->NPC->scriptFlags |= (SCF_NAV_CAN_FLY | SCF_FLY_WITH_JET | SCF_NAV_CAN_JUMP);
+		ent->NPC->aiFlags |= NPCAI_SHIELDS;//give them the ability to cloak
+		{//start cloaked
+			Lightside_Cloak(ent);
 		}
 	}
 	else if ( ent->client->NPC_class == CLASS_ASSASSIN_DROID )
@@ -344,6 +371,49 @@ void NPC_SetMiscDefaultData( gentity_t *ent )
 	{//FIXME: extern this into NPC.cfg?
 		ent->NPC->scriptFlags |= SCF_NO_FORCE;//force powers don't work on him
 		ent->NPC->aiFlags |= NPCAI_BOSS_CHARACTER;
+	}
+	if (!Q_stricmp("Jerec", ent->NPC_type))
+	{
+		ent->NPC->scriptFlags |= SCF_WALKING;
+		ent->NPC->aiFlags |= NPCAI_BOSS_CHARACTER;
+		ent->flags |= (FL_DMG_BY_SABER_ONLY);
+	}
+	if (!Q_stricmp("Luke_ECM5", ent->NPC_type))
+	{
+		ent->NPC->scriptFlags |= (SCF_NO_FORCE|SCF_DONT_FLEE);
+		ent->NPC->aiFlags |= NPCAI_BOSS_CHARACTER;
+		ent->flags |= (FL_DMG_BY_SABER_ONLY);
+	}
+	if (!Q_stricmp("Luke_start", ent->NPC_type))
+	{
+		ent->NPC->scriptFlags |= SCF_DONT_FLEE;
+		ent->NPC->aiFlags |= NPCAI_GREET_ALLIES;
+	}
+	if (!Q_stricmp("Talreek", ent->NPC_type))
+	{
+		ent->NPC->scriptFlags |= SCF_LOOK_FOR_ENEMIES;
+		ent->NPC->aiFlags |= NPCAI_BOSS_CHARACTER;
+		ent->flags |= (FL_NO_KNOCKBACK);
+	}
+	if (!Q_stricmp("LightSide", ent->NPC_type))
+	{
+		ent->NPC->scriptFlags |= (SCF_MORELIGHT|SCF_NO_COMBAT_TALK|SCF_NO_FALLTODEATH);
+		ent->NPC->aiFlags |= (NPCAI_SHIELDS|NPCAI_BOSS_CHARACTER);
+	}
+	if (!Q_stricmp("DarkSide", ent->NPC_type))
+	{
+		ent->NPC->scriptFlags |= (SCF_CHASE_ENEMIES|SCF_DONT_FLEE|SCF_LOOK_FOR_ENEMIES|SCF_NO_COMBAT_TALK|SCF_NO_FALLTODEATH);
+		ent->NPC->aiFlags |= (NPCAI_BOSS_CHARACTER);
+	}
+	if (!Q_stricmp("TheForce", ent->NPC_type))
+	{
+		ent->NPC->scriptFlags |= (SCF_WALKING|SCF_DONT_FLEE|SCF_NO_ACROBATICS|SCF_NO_COMBAT_TALK|SCF_NO_FALLTODEATH|SCF_NO_FORCE);
+		ent->NPC->aiFlags |= (NPCAI_BOSS_CHARACTER);
+	}
+	if (!Q_stricmp("flamewarrior_flame", ent->NPC_type))
+	{
+		ent->NPC->scriptFlags |= SCF_DONT_FIRE;
+		ent->NPC->aiFlags |= NPCAI_FLAMETHROW;
 	}
 	if ( !Q_stricmp( "emperor", ent->NPC_type )
 		|| !Q_stricmp( "cultist_grip", ent->NPC_type )
@@ -401,7 +471,13 @@ void NPC_SetMiscDefaultData( gentity_t *ent )
 	if ( ent->client->NPC_class == CLASS_DESANN
 		|| ent->client->NPC_class == CLASS_TAVION
 		|| ent->client->NPC_class == CLASS_LUKE
+		|| ent->client->NPC_class == CLASS_LUKE_STRONG
+		|| ent->client->NPC_class == CLASS_TALREEK
+		|| ent->client->NPC_class == CLASS_JEREC
 		|| ent->client->NPC_class == CLASS_KYLE
+		|| ent->client->NPC_class == CLASS_DARKSIDE
+		|| ent->client->NPC_class == CLASS_LIGHTSIDE
+		|| ent->client->NPC_class == CLASS_THEFORCE
 		|| Q_stricmp("tavion_scepter", ent->NPC_type ) == 0
 		|| Q_stricmp("alora_dual", ent->NPC_type ) == 0 )
 	{
@@ -436,6 +512,8 @@ void NPC_SetMiscDefaultData( gentity_t *ent )
 		}
 		else if ( ent->client->NPC_class == CLASS_JEDI
 			|| ent->client->NPC_class == CLASS_KYLE
+			|| ent->client->NPC_class == CLASS_CLONE
+			|| ent->client->NPC_class == CLASS_LUKE_STRONG
 			|| ent->client->NPC_class == CLASS_LUKE )
 		{//good jedi
 			ent->client->enemyTeam = TEAM_ENEMY;
@@ -460,6 +538,13 @@ void NPC_SetMiscDefaultData( gentity_t *ent )
 			case WP_DISRUPTOR:
 			case WP_BOWCASTER:
 			case WP_REPEATER:
+			case WP_CLONERIFLE:
+				if (ent->client->NPC_class == CLASS_CLONE
+					&& (!Q_irand(0,8)) )
+				{
+					ent->NPC->scriptFlags |= SCF_ALT_FIRE;
+				}
+			case WP_REBELRIFLE:
 			case WP_DEMP2:
 			case WP_FLECHETTE:
 			case WP_ROCKET_LAUNCHER:
@@ -473,6 +558,17 @@ void NPC_SetMiscDefaultData( gentity_t *ent )
 				//FIXME: not necc. a ST
 				ST_ClearTimers( ent );
 				if ( ent->NPC->rank >= RANK_LT || ent->client->ps.weapon == WP_THERMAL )
+				{//officers, grenade-throwers use alt-fire
+					//ent->health = 50;
+					//ent->NPC->scriptFlags |= SCF_ALT_FIRE;
+				}
+				break;
+			case WP_DROIDBLASTER:
+				//FIXME: health in NPCs.cfg, and not all blaster users are stormtroopers
+				//ent->health = 25;
+				//FIXME: not necc. a ST
+				ST_ClearTimers(ent);
+				if (ent->NPC->rank >= RANK_LT || ent->client->ps.weapon == WP_THERMAL)
 				{//officers, grenade-throwers use alt-fire
 					//ent->health = 50;
 					//ent->NPC->scriptFlags |= SCF_ALT_FIRE;
@@ -525,10 +621,17 @@ void NPC_SetMiscDefaultData( gentity_t *ent )
 			{//FIXME: a spawnflag?
 				Jedi_Cloak( ent );
 			}
-		 	if( ent->client->NPC_class == CLASS_TAVION ||
+		 	if ( ent->client->NPC_class == CLASS_TAVION ||
 				ent->client->NPC_class == CLASS_ALORA ||
 				(ent->client->NPC_class == CLASS_REBORN && ent->client->ps.weapon == WP_SABER) ||
+				(ent->client->NPC_class == CLASS_GUNNER && ent->client->ps.weapon == WP_SABER) ||
 				ent->client->NPC_class == CLASS_DESANN ||
+				ent->client->NPC_class == CLASS_SORCERER ||
+				ent->client->NPC_class == CLASS_LUKE_STRONG ||
+				ent->client->NPC_class == CLASS_JEREC ||
+				ent->client->NPC_class == CLASS_DARKSIDE ||
+				ent->client->NPC_class == CLASS_LIGHTSIDE ||
+				ent->client->NPC_class == CLASS_THEFORCE ||
 				ent->client->NPC_class == CLASS_SHADOWTROOPER )
 			{
 				ent->client->enemyTeam = TEAM_PLAYER;
@@ -578,6 +681,14 @@ void NPC_SetMiscDefaultData( gentity_t *ent )
 					NPCInfo->scriptFlags |= SCF_PILOT;
 					//machine-gunner
 					break;
+				case WP_CLONERIFLE:
+					NPCInfo->scriptFlags |= SCF_PILOT;
+					//machine-gunner
+					break;
+				case WP_REBELRIFLE:
+					NPCInfo->scriptFlags |= SCF_PILOT;
+					//machine-gunner
+					break;
 				case WP_DEMP2:
 					break;
 				case WP_FLECHETTE:
@@ -616,6 +727,21 @@ void NPC_SetMiscDefaultData( gentity_t *ent )
 						//ent->NPC->scriptFlags |= SCF_ALT_FIRE;
 					}
 					break;
+				case WP_DROIDBLASTER:
+					//FIXME: health in NPCs.cfg, and not all blaster users are stormtroopers
+					//FIXME: not necc. a ST
+					NPCInfo->scriptFlags |= SCF_PILOT;
+
+					ST_ClearTimers(ent);
+					if (ent->NPC->rank >= RANK_COMMANDER)
+					{//commanders use alt-fire
+						//ent->NPC->scriptFlags |= SCF_ALT_FIRE;
+					}
+					if (!Q_stricmp("battledroid_elite", ent->NPC_type))
+					{
+						ent->NPC->scriptFlags |= SCF_ALT_FIRE;
+					}
+					break;
 				}
 			}
 		}
@@ -648,6 +774,7 @@ void NPC_SetMiscDefaultData( gentity_t *ent )
 		ent->client->NPC_class==CLASS_GLIDER ||
 		ent->client->NPC_class==CLASS_IMPWORKER ||
 		ent->client->NPC_class==CLASS_BOBAFETT ||
+		ent->client->NPC_class==CLASS_LIGHTSIDE ||
 		ent->client->NPC_class==CLASS_ROCKETTROOPER
 		)
 	{
@@ -1044,6 +1171,9 @@ void NPC_Begin (gentity_t *ent)
 
 		if ( ent->client->NPC_class != CLASS_REBORN
 			&& ent->client->NPC_class != CLASS_SHADOWTROOPER
+			&& ent->client->NPC_class != CLASS_GUNNER
+			&& ent->client->NPC_class != CLASS_CLONE
+			&& ent->client->NPC_class != CLASS_SORCERER
 			//&& ent->client->NPC_class != CLASS_TAVION
 			//&& ent->client->NPC_class != CLASS_DESANN
 			&& ent->client->NPC_class != CLASS_JEDI )
@@ -1115,7 +1245,8 @@ void NPC_Begin (gentity_t *ent)
 		}
 	}
 	else if ( ent->client->NPC_class == CLASS_REBORN
-		|| ent->client->NPC_class == CLASS_SHADOWTROOPER )
+		|| ent->client->NPC_class == CLASS_SHADOWTROOPER
+		|| ent->client->NPC_class == CLASS_GUNNER )
 	{
 		switch ( g_spskill->integer )
 		{

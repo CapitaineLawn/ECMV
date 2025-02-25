@@ -1239,7 +1239,7 @@ void DoImpact( gentity_t *self, gentity_t *other, qboolean damageSelf, trace_t *
 				|| self->client->NPC_class == CLASS_VEHICLE
 				|| ( magnitude >= 700 ) )//health here is used to simulate structural integrity
 			{
-				if ( (self->s.weapon == WP_SABER || self->s.number<MAX_CLIENTS || (self->client&&(self->client->NPC_class==CLASS_BOBAFETT||self->client->NPC_class==CLASS_ROCKETTROOPER))) && self->client && self->client->ps.groundEntityNum < ENTITYNUM_NONE && magnitude < 1000 )
+				if ( (self->s.weapon == WP_SABER || self->s.number<MAX_CLIENTS || (self->client&&(self->client->NPC_class==CLASS_BOBAFETT||self->client->NPC_class==CLASS_ROCKETTROOPER||self->client->NPC_class == CLASS_LIGHTSIDE))) && self->client && self->client->ps.groundEntityNum < ENTITYNUM_NONE && magnitude < 1000 )
 				{//players and jedi take less impact damage
 					//allow for some lenience on high falls
 					magnitude /= 2;
@@ -1625,7 +1625,7 @@ void G_MatchPlayerWeapon( gentity_t *ent )
 		int newWeap;
 		if ( g_entities[0].client->ps.weapon > WP_CONCUSSION )
 		{
-			newWeap = WP_BLASTER_PISTOL;
+			newWeap = WP_CLONERIFLE;
 		}
 		else
 		{
@@ -4688,6 +4688,8 @@ void	ClientAlterSpeed(gentity_t *ent, usercmd_t *ucmd, qboolean	controlledByPlay
 extern qboolean ForceDrain2(gentity_t *ent);
 extern void ForceGrip(gentity_t *ent);
 extern void ForceLightning(gentity_t *ent);
+extern void ForceElements(gentity_t* ent);
+extern void ForceDestruction(gentity_t* ent);
 extern void ForceProtect(gentity_t *ent);
 extern void ForceRage(gentity_t *ent);
 extern void ForceSeeing(gentity_t *ent);
@@ -4719,6 +4721,12 @@ static void ProcessGenericCmd(gentity_t *ent, byte cmd)
 		break;
 	case GENCMD_FORCE_LIGHTNING:
 		ForceLightning(ent);
+		break;
+	case GENCMD_FORCE_ELEMENTS:
+		ForceElements(ent);
+		break;
+	case GENCMD_FORCE_DESTRUCTION:
+		ForceDestruction(ent);
 		break;
 	case GENCMD_FORCE_RAGE:
 		ForceRage(ent);
@@ -5138,13 +5146,14 @@ extern cvar_t	*g_skippingcin;
 					//FIXME: need impact sound event
 					GEntity_PainFunc( groundEnt, ent, ent, groundEnt->currentOrigin, 0, MOD_CRUSH );
 					if ( !forceKnockdown
-						&& groundEnt->client->NPC_class == CLASS_DESANN
-						&& ent->client->NPC_class != CLASS_LUKE )
+						&& groundEnt->client->NPC_class == CLASS_DESANN || groundEnt->client->NPC_class == CLASS_JEREC
+						&& ent->client->NPC_class != CLASS_LUKE && ent->client->NPC_class != CLASS_LUKE_STRONG)
 					{//can't knock down desann unless you're luke
 						//FIXME: should he smack you away like Galak Mech?
 					}
 					else if ( forceKnockdown //forced
-						|| ent->client->NPC_class == CLASS_DESANN //desann always knocks people down
+						|| ent->client->NPC_class == CLASS_DESANN || ent->client->NPC_class == CLASS_JEREC || ent->client->NPC_class == CLASS_SORCERER
+						|| ent->client->NPC_class == CLASS_DARKSIDE ||ent->client->NPC_class == CLASS_LIGHTSIDE || ent->client->NPC_class == CLASS_THEFORCE//desann always knocks people down
 						|| ( ( (groundEnt->s.number&&(groundEnt->s.weapon!=WP_SABER||!groundEnt->NPC||groundEnt->NPC->rank<Q_irand(RANK_CIVILIAN,RANK_CAPTAIN+1)))  //an NPC who is either not a saber user or passed the rank-based probability test
 								|| ((!ent->s.number||G_ControlledByPlayer(groundEnt)) && !Q_irand( 0, 3 )&&cg.renderingThirdPerson&&!cg.zoomMode) )//or a player in third person, 25% of the time
 							&& groundEnt->client->playerTeam != ent->client->playerTeam//and not on the same team

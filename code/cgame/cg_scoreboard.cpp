@@ -314,6 +314,18 @@ w = cgi_R_Font_StrLenPixels(text, cgs.media.qhFontSmall, 0.8f);
 	cgi_R_Font_DrawString(x,   y, text, colorTable[CT_LTGOLD1], cgs.media.qhFontSmall, -1, 0.8f);
 	cgi_R_Font_DrawString(x+w, y, va("%d",cg_entities[0].gent->client->sess.missionStats.forceUsed[FP_LIGHTNING]), colorTable[CT_WHITE], cgs.media.qhFontSmall, -1, 0.8f);
 
+	y += pad;
+	cgi_SP_GetStringTextString("SP_INGAME_ELEMENTS", text, sizeof(text));
+	w = cgi_R_Font_StrLenPixels(text, cgs.media.qhFontSmall, 0.8f);
+	cgi_R_Font_DrawString(x, y, text, colorTable[CT_LTGOLD1], cgs.media.qhFontSmall, -1, 0.8f);
+	cgi_R_Font_DrawString(x + w, y, va("%d", cg_entities[0].gent->client->sess.missionStats.forceUsed[FP_ELEMENTS]), colorTable[CT_WHITE], cgs.media.qhFontSmall, -1, 0.8f);
+
+	y += pad;
+	cgi_SP_GetStringTextString("SP_INGAME_DESTRUCTION", text, sizeof(text));
+	w = cgi_R_Font_StrLenPixels(text, cgs.media.qhFontSmall, 0.8f);
+	cgi_R_Font_DrawString(x, y, text, colorTable[CT_LTGOLD1], cgs.media.qhFontSmall, -1, 0.8f);
+	cgi_R_Font_DrawString(x + w, y, va("%d", cg_entities[0].gent->client->sess.missionStats.forceUsed[FP_DESTRUCTION]), colorTable[CT_WHITE], cgs.media.qhFontSmall, -1, 0.8f);
+
 //second column, LIGHT SABER
 	y = 180;
 	x = 140;

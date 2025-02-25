@@ -140,7 +140,7 @@ static void WP_FireConcussionAlt( gentity_t *ent )
 		traceEnt = &g_entities[tr.entityNum];
 
 		if ( traceEnt //&& traceEnt->NPC
-			&& ( traceEnt->s.weapon == WP_SABER || (traceEnt->client && (traceEnt->client->NPC_class == CLASS_BOBAFETT||traceEnt->client->NPC_class == CLASS_REBORN) ) ) )
+			&& ( traceEnt->s.weapon == WP_SABER || (traceEnt->client && (traceEnt->client->NPC_class == CLASS_BOBAFETT||traceEnt->client->NPC_class == CLASS_REBORN||traceEnt->client->NPC_class == CLASS_GUNNER) ) ) )
 		{//FIXME: need a more reliable way to know we hit a jedi?
 			hitDodged = Jedi_DodgeEvasion( traceEnt, ent, &tr, HL_NONE );
 			//acts like we didn't even hit him
@@ -302,6 +302,8 @@ static void WP_FireConcussion( gentity_t *ent )
 		}
 	}
 
+
+
 	// Make it easier to hit things
 	VectorSet( missile->maxs, ROCKET_SIZE, ROCKET_SIZE, ROCKET_SIZE );
 	VectorScale( missile->maxs, -1, missile->mins );
@@ -319,6 +321,60 @@ static void WP_FireConcussion( gentity_t *ent )
 	// we don't want it to ever bounce
 	missile->bounceCount = 0;
 }
+
+void ForceDestruction_projectile(gentity_t* ent)
+{
+	vec3_t start, forwardVec, vrightVec, up;
+	int damage = weaponData[WP_CONCUSSION].damage;
+	float vel = 1200.0f; // Augmenter la vitesse pour éviter les bugs de collision
+
+	// Vérifier que l'entité est valide
+	if (!ent || !ent->client)
+		return;
+
+	// Initialisation des vecteurs
+	AngleVectors(ent->client->ps.viewangles, forwardVec, vrightVec, up);
+
+	// Positionner le projectile au niveau du joueur/NPC
+	VectorCopy(ent->client->ps.origin, start);
+	VectorMA(start, 20, forwardVec, start); // Avancer légèrement pour éviter les bugs de collision
+
+	// Vérification du vecteur directionnel
+	if (VectorLength(forwardVec) == 0) {
+		return;
+	}
+
+	// Création du projectile
+	gentity_t* missile = CreateMissile(start, forwardVec, vel, 10000, ent, qfalse);
+	missile->classname = "conc_proj";
+	missile->s.weapon = WP_CONCUSSION;
+	missile->mass = 10;
+
+	// Gestion des dégâts selon le niveau de force destruction
+	if (ent->s.number != 0) {
+		if (ent->client->ps.forcePowerLevel[FP_DESTRUCTION] < FORCE_LEVEL_2)
+			damage = CONC_NPC_DAMAGE_EASY;
+		else if (ent->client->ps.forcePowerLevel[FP_DESTRUCTION] < FORCE_LEVEL_3)
+			damage = CONC_NPC_DAMAGE_NORMAL;
+		else
+			damage = CONC_NPC_DAMAGE_HARD;
+	}
+
+	// Définition des dégâts et des propriétés du missile
+	missile->damage = damage;
+	missile->dflags = DAMAGE_EXTRA_KNOCKBACK;
+	missile->methodOfDeath = MOD_CONC;
+	missile->splashMethodOfDeath = MOD_CONC;
+	missile->clipmask = MASK_SHOT | CONTENTS_LIGHTSABER;
+	missile->splashDamage = weaponData[WP_CONCUSSION].splashDamage;
+	missile->splashRadius = weaponData[WP_CONCUSSION].splashRadius;
+	missile->bounceCount = 0; // Empêcher le rebond
+
+	// Assurer que le projectile explose
+	missile->bounceCount = 0;
+	missile->nextthink = level.time + 5000; // Explosion automatique après 5 secondes
+}
+
 
 void WP_Concussion( gentity_t *ent, qboolean alt_fire )
 {

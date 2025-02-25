@@ -174,6 +174,18 @@ typedef struct {
 	qhandle_t	blueSaberCoreShader;
 	qhandle_t	purpleSaberGlowShader;
 	qhandle_t	purpleSaberCoreShader;
+	qhandle_t	whiteSaberGlowShader;
+	qhandle_t	whiteSaberCoreShader;
+	qhandle_t	goldSaberGlowShader;
+	qhandle_t	goldSaberCoreShader;
+	qhandle_t	kyleSaberGlowShader;
+	qhandle_t	kyleSaberCoreShader;
+	qhandle_t	lukeSaberGlowShader;
+	qhandle_t	lukeSaberCoreShader;
+	qhandle_t	jerecSaberGlowShader;
+	qhandle_t	jerecSaberCoreShader;
+	qhandle_t	maraSaberGlowShader;
+	qhandle_t	maraSaberCoreShader;
 
 	qhandle_t	explosionModel;
 	qhandle_t	surfaceExplosionShader;
@@ -328,6 +340,12 @@ typedef struct
 	fxHandle_t	blasterWallImpactEffect;
 	fxHandle_t	blasterFleshImpactEffect;
 
+	// DROID BLASTER
+
+	fxHandle_t	droidblasterShotEffect;
+	fxHandle_t	droidblasterWallImpactEffect;
+	fxHandle_t	droidblasterFleshImpactEffect;
+
 	// BOWCASTER
 	fxHandle_t	bowcasterShotEffect;
 	fxHandle_t	bowcasterBounceEffect;
@@ -344,6 +362,13 @@ typedef struct
 	fxHandle_t	forceConfusion;
 	fxHandle_t	forceLightning;
 	fxHandle_t	forceLightningWide;
+	fxHandle_t	forceLightning_red;
+	fxHandle_t	forceLightningWide_red;
+	fxHandle_t	forceBeam;
+	fxHandle_t	forceWind;
+	fxHandle_t	forceFire;
+	fxHandle_t	forceFireBlue;
+	fxHandle_t	forceFireGreen;
 	//fxHandle_t	forceInvincibility;
 	fxHandle_t	forceHeal;
 

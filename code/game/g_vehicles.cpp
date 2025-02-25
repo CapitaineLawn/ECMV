@@ -809,7 +809,7 @@ bool Board( Vehicle_t *pVeh, bgEntity_t *pEnt )
 			ent->client->ps.stats[ STAT_WEAPONS ] |= (1<<WP_NONE);
 		}
 		if ( (ent->client->ps.weapon != WP_SABER
-			&& ent->client->ps.weapon != WP_BLASTER) || !(pVeh->m_pVehicleInfo->type == VH_ANIMAL || pVeh->m_pVehicleInfo->type == VH_SPEEDER))
+			&& ent->client->ps.weapon != WP_BLASTER && ent->client->ps.weapon != WP_DROIDBLASTER) || !(pVeh->m_pVehicleInfo->type == VH_ANIMAL || pVeh->m_pVehicleInfo->type == VH_SPEEDER))
 		{//switch to weapon none?
 			if (ent->s.number<MAX_CLIENTS)
 			{

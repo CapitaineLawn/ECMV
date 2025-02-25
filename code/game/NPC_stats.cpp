@@ -79,6 +79,8 @@ stringID_table_t FPTable[] =
 	ENUM2STRING(FP_TELEPATHY),
 	ENUM2STRING(FP_GRIP),
 	ENUM2STRING(FP_LIGHTNING),
+	ENUM2STRING(FP_ELEMENTS),
+	ENUM2STRING(FP_DESTRUCTION),
 	ENUM2STRING(FP_SABERTHROW),
 	ENUM2STRING(FP_SABER_DEFENSE),
 	ENUM2STRING(FP_SABER_OFFENSE),
@@ -131,10 +133,18 @@ stringID_table_t ClassTable[] =
 	ENUM2STRING(CLASS_INTERROGATOR),		// droid
 	ENUM2STRING(CLASS_JAN),
 	ENUM2STRING(CLASS_JEDI),
+	ENUM2STRING(CLASS_CLONE),			// BEST BOYS
+	ENUM2STRING(CLASS_GUNNER),
+	ENUM2STRING(CLASS_JEREC),
+	ENUM2STRING(CLASS_SORCERER),
+	ENUM2STRING(CLASS_DARKSIDE),
+	ENUM2STRING(CLASS_LIGHTSIDE),
+	ENUM2STRING(CLASS_THEFORCE),
 	ENUM2STRING(CLASS_KYLE),
 	ENUM2STRING(CLASS_LANDO),
 	ENUM2STRING(CLASS_LIZARD),
 	ENUM2STRING(CLASS_LUKE),
+	ENUM2STRING(CLASS_LUKE_STRONG),
 	ENUM2STRING(CLASS_MARK1),			// droid
 	ENUM2STRING(CLASS_MARK2),			// droid
 	ENUM2STRING(CLASS_GALAKMECH),		// droid
@@ -163,6 +173,7 @@ stringID_table_t ClassTable[] =
 	ENUM2STRING(CLASS_NOGHRI),
 	ENUM2STRING(CLASS_TAVION),
 	ENUM2STRING(CLASS_ALORA),
+	ENUM2STRING(CLASS_TALREEK),
 	ENUM2STRING(CLASS_TRANDOSHAN),
 	ENUM2STRING(CLASS_UGNAUGHT),
 	ENUM2STRING(CLASS_JAWA),
@@ -292,6 +303,30 @@ saber_colors_t TranslateSaberColor( const char *name )
 	if ( !Q_stricmp( name, "purple" ) )
 	{
 		return SABER_PURPLE;
+	}
+	if (!Q_stricmp(name, "white"))
+	{
+		return SABER_WHITE;
+	}
+	if (!Q_stricmp(name, "gold"))
+	{
+		return SABER_GOLD;
+	}
+	if (!Q_stricmp(name, "kyle"))
+	{
+		return SABER_KYLE;
+	}
+	if (!Q_stricmp(name, "luke"))
+	{
+		return SABER_LUKE;
+	}
+	if (!Q_stricmp(name, "jerec"))
+	{
+		return SABER_JEREC;
+	}
+	if (!Q_stricmp(name, "mara"))
+	{
+		return SABER_MARA;
 	}
 	if ( !Q_stricmp( name, "random" ) )
 	{

@@ -1196,7 +1196,8 @@ qboolean G_SetG2PlayerModelInfo( gentity_t *ent, const char *modelName, const ch
 				ent->genericBolt1 = gi.G2API_AddBolt( &ent->ghoul2[ent->playerModel], "*jet1" );
 				ent->genericBolt2 = gi.G2API_AddBolt( &ent->ghoul2[ent->playerModel], "*jet2" );
 			}
-			if ( ent->client->NPC_class == CLASS_BOBAFETT )
+			if ( ent->client->NPC_class == CLASS_BOBAFETT
+				|| ent->client->NPC_class == CLASS_SORCERER )
 			{//get the flamethrower bolt
 				ent->genericBolt3 = gi.G2API_AddBolt(&ent->ghoul2[ent->playerModel], "*flamethrower");
 			}
@@ -2028,6 +2029,7 @@ void G_ChangePlayerModel( gentity_t *ent, const char *newModel )
 			ClientUserinfoChanged( ent->s.number );
 			//Ugh, kind of a hack for now:
 			if ( ent->client->NPC_class == CLASS_BOBAFETT
+				|| ent->client->NPC_class == CLASS_LIGHTSIDE
 				|| ent->client->NPC_class == CLASS_ROCKETTROOPER )
 			{
 				//FIXME: remove saber, too?

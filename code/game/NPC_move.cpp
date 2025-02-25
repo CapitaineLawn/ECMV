@@ -42,6 +42,7 @@ extern qboolean PM_InKnockDown( playerState_t *ps );
 extern cvar_t	*g_navSafetyChecks;
 
 extern qboolean Boba_Flying( gentity_t *self );
+extern qboolean Lightside_Flying(gentity_t* self);
 extern qboolean PM_InRoll( playerState_t *ps );
 
 #define	APEX_HEIGHT		200.0f
@@ -345,6 +346,8 @@ void	 NPC_JumpAnimation()
 	int	jumpAnim = BOTH_JUMP1;
 
 	if ( NPC->client->NPC_class == CLASS_BOBAFETT
+		|| NPC->client->NPC_class == CLASS_LIGHTSIDE
+		|| NPC->client->NPC_class == CLASS_CLONE
 		|| (NPC->client->NPC_class == CLASS_REBORN && NPC->s.weapon != WP_SABER)
 		|| NPC->client->NPC_class == CLASS_ROCKETTROOPER
 		||( NPCInfo->rank != RANK_CREWMAN && NPCInfo->rank <= RANK_LT_JG ) )
@@ -374,6 +377,7 @@ void	 NPC_JumpSound()
 		//FIXME: can I delay the actual jump so that it matches the anim...?
 	}
 	else if ( NPC->client->NPC_class == CLASS_BOBAFETT
+		|| NPC->client->NPC_class == CLASS_LIGHTSIDE
 		|| NPC->client->NPC_class == CLASS_ROCKETTROOPER )
 	{
 		// does this really need to be here?

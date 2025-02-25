@@ -323,7 +323,13 @@ typedef enum
 	SABER_YELLOW,
 	SABER_GREEN,
 	SABER_BLUE,
-	SABER_PURPLE
+	SABER_PURPLE,
+	SABER_WHITE,
+	SABER_GOLD,
+	SABER_KYLE,
+	SABER_LUKE,
+	SABER_JEREC,
+	SABER_MARA
 
 } saber_colors_t;
 
@@ -745,6 +751,8 @@ typedef enum
 	FP_TELEPATHY,//instant
 	FP_GRIP,//hold/duration
 	FP_LIGHTNING,//hold/duration
+	FP_ELEMENTS,//hold/duration
+	FP_DESTRUCTION,//hold/duration
 	FP_SABERTHROW,
 	FP_SABER_DEFENSE,
 	FP_SABER_OFFENSE,
@@ -2249,6 +2257,7 @@ using playerState_t = PlayerStateBase<saberInfo_t>;
 //
 #define	BUTTON_ATTACK		1
 #define	BUTTON_FORCE_LIGHTNING	2			// displays talk balloon and disables actions
+#define	BUTTON_FORCE_ELEMENTS	512	
 #define	BUTTON_USE_FORCE	4
 #define	BUTTON_FORCE_DRAIN	8			// draining
 #define	BUTTON_BLOCKING		8
@@ -2275,6 +2284,8 @@ typedef enum
 	GENCMD_FORCE_DISTRACT,
 	GENCMD_FORCE_GRIP,
 	GENCMD_FORCE_LIGHTNING,
+	GENCMD_FORCE_ELEMENTS,
+	GENCMD_FORCE_DESTRUCTION,
 	GENCMD_FORCE_RAGE,
 	GENCMD_FORCE_PROTECT,
 	GENCMD_FORCE_ABSORB,

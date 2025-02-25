@@ -2775,12 +2775,12 @@ static void CG_G2PlayerAngles( centity_t *cent, vec3_t legs[3], vec3_t angles )
 			{
 				cent->gent->client->renderInfo.legsYaw = angles[YAW];
 			}
-			if ( ((cent->gent->client->ps.eFlags&EF_FORCE_GRIPPED)||((cent->gent->client->NPC_class == CLASS_BOBAFETT||cent->gent->client->NPC_class == CLASS_ROCKETTROOPER)&&cent->gent->client->moveType==MT_FLYSWIM))
+			if ( ((cent->gent->client->ps.eFlags&EF_FORCE_GRIPPED)||((cent->gent->client->NPC_class == CLASS_BOBAFETT||cent->gent->client->NPC_class == CLASS_ROCKETTROOPER||cent->gent->client->NPC_class == CLASS_LIGHTSIDE)&&cent->gent->client->moveType==MT_FLYSWIM))
 				&& cent->gent->client->ps.groundEntityNum == ENTITYNUM_NONE )
 			{
 				vec3_t	centFwd, centRt;
 				float	divFactor = 1.0f;
-				if ( (cent->gent->client->NPC_class == CLASS_BOBAFETT||cent->gent->client->NPC_class == CLASS_ROCKETTROOPER)
+				if ( (cent->gent->client->NPC_class == CLASS_BOBAFETT||cent->gent->client->NPC_class == CLASS_ROCKETTROOPER||cent->gent->client->NPC_class == CLASS_LIGHTSIDE)
 					&& cent->gent->client->moveType == MT_FLYSWIM )
 				{
 					divFactor = 3.0f;
@@ -5626,6 +5626,24 @@ static void CG_RGBForSaberColor( saber_colors_t color, vec3_t rgb )
 		case SABER_PURPLE:
 			VectorSet( rgb, 0.9f, 0.2f, 1.0f );
 			break;
+		case SABER_WHITE:
+			VectorSet(rgb, 1.0f, 1.0f, 1.0f);
+			break;
+		case SABER_GOLD:
+			VectorSet(rgb, 1.0f, 0.4f, 0.2f);
+			break;
+		case SABER_KYLE:
+			VectorSet(rgb, 0.3f, 0.2f, 0.9f);
+			break;
+		case SABER_LUKE:
+			VectorSet(rgb, 0.1f, 1.0f, 0.0f);
+			break;
+		case SABER_JEREC:
+			VectorSet(rgb, 1.0f, 0.2f, 0.0f);
+			break;
+		case SABER_MARA:
+			VectorSet(rgb, 0.9f, 0.1f, 1.0f);
+			break;
 	}
 }
 
@@ -5785,6 +5803,30 @@ static void CG_DoSaber( vec3_t origin, vec3_t dir, float length, float lengthMax
 			glow = cgs.media.purpleSaberGlowShader;
 			blade = cgs.media.purpleSaberCoreShader;
 			break;
+		case SABER_WHITE:
+			glow = cgs.media.whiteSaberGlowShader;
+			blade = cgs.media.whiteSaberCoreShader;
+			break;
+		case SABER_GOLD:
+			glow = cgs.media.goldSaberGlowShader;
+			blade = cgs.media.goldSaberCoreShader;
+			break;
+		case SABER_KYLE:
+			glow = cgs.media.kyleSaberGlowShader;
+			blade = cgs.media.kyleSaberCoreShader;
+			break;
+		case SABER_LUKE:
+			glow = cgs.media.lukeSaberGlowShader;
+			blade = cgs.media.lukeSaberCoreShader;
+			break;
+		case SABER_JEREC:
+			glow = cgs.media.jerecSaberGlowShader;
+			blade = cgs.media.jerecSaberCoreShader;
+			break;
+		case SABER_MARA:
+			glow = cgs.media.maraSaberGlowShader;
+			blade = cgs.media.maraSaberCoreShader;
+			break;
 	}
 
 	// always add a light because sabers cast a nice glow before they slice you in half!!  or something...
@@ -5792,7 +5834,7 @@ static void CG_DoSaber( vec3_t origin, vec3_t dir, float length, float lengthMax
 	{//FIXME: RGB combine all the colors of the sabers you're using into one averaged color!
 		vec3_t rgb={1,1,1};
 		CG_RGBForSaberColor( color, rgb );
-		cgi_R_AddLightToScene( mid, (length*1.4f) + (Q_flrand(0.0f, 1.0f)*3.0f), rgb[0], rgb[1], rgb[2] );
+		cgi_R_AddLightToScene( mid, (length*1.7f) + (Q_flrand(0.0f, 1.0f)*3.0f), rgb[0], rgb[1], rgb[2] );
 	}
 
 	memset( &saber, 0, sizeof( refEntity_t ));
@@ -5805,14 +5847,14 @@ static void CG_DoSaber( vec3_t origin, vec3_t dir, float length, float lengthMax
 	// It's not quite what I'd hoped tho.  If you have any ideas, go for it!  --Pat
 	if (length < lengthMax )
 	{
-		radiusmult = 1.0 + (2.0 / length);		// Note this creates a curve, and length cannot be < 0.5.
+		radiusmult = 1.5 + (2.0 / length);		// Note this creates a curve, and length cannot be < 0.5.
 	}
 	else
 	{
-		radiusmult = 1.0;
+		radiusmult = 1.5;
 	}
 
-	float radiusRange = radius * 0.075f;
+	float radiusRange = radius * 0.175f;
 	float radiusStart = radius-radiusRange;
 
 	saber.radius = (radiusStart + Q_flrand(-1.0f, 1.0f) * radiusRange)*radiusmult;
@@ -6615,6 +6657,24 @@ Ghoul2 Insert End
 							break;
 						case SABER_PURPLE:
 							VectorSet( rgb1, 220.0f, 0.0f, 255.0f );
+							break;
+						case SABER_WHITE:
+							VectorSet(rgb1, 255.0f, 255.0f, 255.0f);
+							break;
+						case SABER_GOLD:
+							VectorSet(rgb1, 237.0f, 214.0f, 91.0f);
+							break;
+						case SABER_KYLE:
+							VectorSet(rgb1, 100.0f, 100.0f, 240.0f);
+							break;
+						case SABER_LUKE:
+							VectorSet(rgb1, 81.0f, 255.0f, 0.0f);
+							break;
+						case SABER_JEREC:
+							VectorSet(rgb1, 255.0f, 35.0f, 0.0f);
+							break;
+						case SABER_MARA:
+							VectorSet(rgb1, 241.0f, 0.0f, 255.0f);
 							break;
 					}
 				}
@@ -7828,7 +7888,8 @@ extern vmCvar_t	cg_thirdPersonAlpha;
 				//FIXME: if the target is absorbing or blocking lightning w/saber, draw a beam from my hand to his (hand?chest?saber?)
 				vec3_t tAng, fxDir;
 				VectorCopy( cent->lerpAngles, tAng );
-				if ( cent->gent->client->ps.forcePowerLevel[FP_LIGHTNING] > FORCE_LEVEL_2 )
+				if (cent->gent->client->ps.forcePowerLevel[FP_LIGHTNING] >= FORCE_LEVEL_2 &&
+					cent->gent->client->ps.forcePowerLevel[FP_LIGHTNING] <= FORCE_LEVEL_3)
 				{//arc
 					vec3_t	fxAxis[3];
 					AnglesToAxis( tAng, fxAxis );
@@ -7841,6 +7902,26 @@ extern vmCvar_t	cg_thirdPersonAlpha;
 						theFxScheduler.PlayEffect( cgs.effects.forceLightningWide, cent->gent->client->renderInfo.handRPoint, fxAxis );
 					}
 				}
+				else if (cent->gent->client->ps.forcePowerLevel[FP_LIGHTNING] == FORCE_LEVEL_4)
+				{//arc
+					{//line
+						AngleVectors(tAng, fxDir, NULL, NULL);
+						theFxScheduler.PlayEffect(cgs.effects.forceBeam, cent->gent->client->renderInfo.handLPoint, fxDir);
+					}
+				}
+				else if (cent->gent->client->ps.forcePowerLevel[FP_LIGHTNING] == FORCE_LEVEL_5)
+				{//arc
+					vec3_t	fxAxis[3];
+					AnglesToAxis(tAng, fxAxis);
+					theFxScheduler.PlayEffect(cgs.effects.forceLightningWide_red, cent->gent->client->renderInfo.handLPoint, fxAxis);
+					if (cent->gent->client->ps.torsoAnim == BOTH_FORCE_2HANDEDLIGHTNING
+						|| cent->gent->client->ps.torsoAnim == BOTH_FORCE_2HANDEDLIGHTNING_START
+						|| cent->gent->client->ps.torsoAnim == BOTH_FORCE_2HANDEDLIGHTNING_HOLD
+						|| cent->gent->client->ps.torsoAnim == BOTH_FORCE_2HANDEDLIGHTNING_RELEASE)
+					{//jackin' 'em up, Palpatine-style
+						theFxScheduler.PlayEffect(cgs.effects.forceLightningWide_red, cent->gent->client->renderInfo.handRPoint, fxAxis);
+					}
+				}
 				else
 				{//line
 					AngleVectors( tAng, fxDir, NULL, NULL );
@@ -7848,6 +7929,40 @@ extern vmCvar_t	cg_thirdPersonAlpha;
 				}
 			}
 
+			if (cent->gent->client->ps.forcePowersActive & (1 << FP_ELEMENTS))
+			{//doing the electrocuting
+				//FIXME: if the target is absorbing or blocking lightning w/saber, draw a beam from my hand to his (hand?chest?saber?)
+				vec3_t tAng, fxDir;
+				VectorCopy(cent->lerpAngles, tAng);
+				if (cent->gent->client->ps.forcePowerLevel[FP_ELEMENTS] == FORCE_LEVEL_1)
+				{//arc
+					{//line
+						AngleVectors(tAng, fxDir, NULL, NULL);
+						theFxScheduler.PlayEffect(cgs.effects.forceWind, cent->gent->client->renderInfo.handLPoint, fxDir);
+					}
+				}
+				else if (cent->gent->client->ps.forcePowerLevel[FP_ELEMENTS] == FORCE_LEVEL_2)
+				{//arc
+					{//line
+						AngleVectors(tAng, fxDir, NULL, NULL);
+						theFxScheduler.PlayEffect(cgs.effects.forceFireBlue, cent->gent->client->renderInfo.handLPoint, fxDir);
+					}
+				}
+				else if (cent->gent->client->ps.forcePowerLevel[FP_ELEMENTS] == FORCE_LEVEL_3)
+				{//arc
+					{//line
+						AngleVectors(tAng, fxDir, NULL, NULL);
+						theFxScheduler.PlayEffect(cgs.effects.forceFire, cent->gent->client->renderInfo.handLPoint, fxDir);
+					}
+				}
+				else if (cent->gent->client->ps.forcePowerLevel[FP_ELEMENTS] == FORCE_LEVEL_4)
+				{//arc
+					{//line
+						AngleVectors(tAng, fxDir, NULL, NULL);
+						theFxScheduler.PlayEffect(cgs.effects.forceFireGreen, cent->gent->client->renderInfo.handLPoint, fxDir);
+					}
+				}
+			}
 			if ( (cent->gent->client->ps.eFlags&EF_POWERING_ROSH) )
 			{
 				vec3_t tAng, fxDir;
@@ -8418,39 +8533,40 @@ FIXME: We do not need to do this, we can remember the last anim and frame they w
 on and coontinue from there.
 ===============
 */
-void CG_ResetPlayerEntity( centity_t *cent ) {
-//	cent->errorTime = -99999;		// guarantee no error decay added
-//	cent->extrapolated = qfalse;
 
-	if ( cent->gent && cent->gent->ghoul2.size() )
+void CG_ResetPlayerEntity(centity_t* cent) {
+	//	cent->errorTime = -99999;		// guarantee no error decay added
+	//	cent->extrapolated = qfalse;
+
+	if (cent->gent && cent->gent->ghoul2.size())
 	{
-		if ( cent->currentState.clientNum < MAX_CLIENTS )
+		if (cent->currentState.clientNum < MAX_CLIENTS)
 		{
-			CG_ClearLerpFrame( &cgs.clientinfo[ cent->currentState.clientNum ], &cent->pe.legs, cent->currentState.legsAnim );
-			CG_ClearLerpFrame( &cgs.clientinfo[ cent->currentState.clientNum ], &cent->pe.torso, cent->currentState.torsoAnim );
+			CG_ClearLerpFrame(&cgs.clientinfo[cent->currentState.clientNum], &cent->pe.legs, cent->currentState.legsAnim);
+			CG_ClearLerpFrame(&cgs.clientinfo[cent->currentState.clientNum], &cent->pe.torso, cent->currentState.torsoAnim);
 		}
-		else if ( cent->gent && cent->gent->client )
+		else if (cent->gent && cent->gent->client)
 		{
-			CG_ClearLerpFrame( &cent->gent->client->clientInfo, &cent->pe.legs, cent->currentState.legsAnim );
-			CG_ClearLerpFrame( &cent->gent->client->clientInfo, &cent->pe.torso, cent->currentState.torsoAnim );
+			CG_ClearLerpFrame(&cent->gent->client->clientInfo, &cent->pe.legs, cent->currentState.legsAnim);
+			CG_ClearLerpFrame(&cent->gent->client->clientInfo, &cent->pe.torso, cent->currentState.torsoAnim);
 		}
 	}
 	//else????
 
-	EvaluateTrajectory( &cent->currentState.pos, cg.time, cent->lerpOrigin );
-	EvaluateTrajectory( &cent->currentState.apos, cg.time, cent->lerpAngles );
+	EvaluateTrajectory(&cent->currentState.pos, cg.time, cent->lerpOrigin);
+	EvaluateTrajectory(&cent->currentState.apos, cg.time, cent->lerpAngles);
 
-// Removed by BTO (VV) - These values are crap anyway. Also changed below to use lerp instead
-//	VectorCopy( cent->lerpOrigin, cent->rawOrigin );
-//	VectorCopy( cent->lerpAngles, cent->rawAngles );
+	// Removed by BTO (VV) - These values are crap anyway. Also changed below to use lerp instead
+	//	VectorCopy( cent->lerpOrigin, cent->rawOrigin );
+	//	VectorCopy( cent->lerpAngles, cent->rawAngles );
 
-	memset( &cent->pe.legs, 0, sizeof( cent->pe.legs ) );
+	memset(&cent->pe.legs, 0, sizeof(cent->pe.legs));
 	cent->pe.legs.yawAngle = cent->lerpAngles[YAW];
 	cent->pe.legs.yawing = qfalse;
 	cent->pe.legs.pitchAngle = 0;
 	cent->pe.legs.pitching = qfalse;
 
-	memset( &cent->pe.torso, 0, sizeof( cent->pe.legs ) );
+	memset(&cent->pe.torso, 0, sizeof(cent->pe.legs));
 	cent->pe.torso.yawAngle = cent->lerpAngles[YAW];
 	cent->pe.torso.yawing = qfalse;
 	cent->pe.torso.pitchAngle = cent->lerpAngles[PITCH];
